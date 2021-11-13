@@ -1,5 +1,7 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
+
+#define HEART   "\x03"
 // you must have a config file, both for windows and for compiling on Linux (MAMA)
 // BUT, you need to change the content of the config!
 #include "config.h"

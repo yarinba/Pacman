@@ -8,25 +8,27 @@
 
 class Game {
 	enum { ESC = 27, BREADCRUMBS = 430 };
+	bool isColored = true;
 	bool isWon = false;
 	bool isLose = false;
 	int eatenBreadcrumbs = 0;
 	int score = 0;
+	int lives = 3;
 	Map map;
 	Pacman pacman;
 	Ghost ghosts[2] = {Ghost(Point(48,3)), Ghost(Point(50,3))};
 private:
-	void displayMenu();
-	void printScore();
-	void printLives();
 	void setNoColor();
-	void run();
 	void increaseScore();
 	void increaseScore(int num);
-	bool isWall();
+	void printScore() const;
+	void printLives() const;
+	void printMenu() const;
+	Point calculateNextPos(Point pos, Direction dir) const;
+	bool isWall() const;
 	bool isBreadcrumb();
 	bool isGhost();
-	Point calculateNextPos(Point pos, Direction dir);
+	void run();
 public:
 	void start();
 };

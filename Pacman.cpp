@@ -24,7 +24,6 @@ void Pacman::setColor(Color _color) {
 	color = _color;
 }
 
-
 void Pacman::move() {
 	pos.draw(' ');
 	pos.move(direction);

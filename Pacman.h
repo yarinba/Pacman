@@ -5,7 +5,6 @@
 #include "Enums.h"
 
 class Pacman {
-	int lives = 3;
 	const char symbol = '@';
 	const char arrowKeys[5] = { 'w', 'x', 'a', 'd', 's'};
 	Point pos = Point(34, 17);

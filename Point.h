@@ -9,10 +9,10 @@ private:
 public:
 	Point();
 	Point(int _x, int _y);
-	int getX();
-	int getY();
+	int getX() const;
+	int getY() const;
 	void set(int _x, int _y);
 	void move(Direction dir);
-	void draw(char ch, Color color = Color::WHITE);
+	void draw(char ch, Color color = Color::WHITE) const;
 	~Point() {}
 };

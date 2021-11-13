@@ -1,6 +1,7 @@
-#include "Game.h"
+﻿#include "Game.h"
 
 void Game::setNoColor() {
+	isColored = false;
 	map.setIsColored(false);
 	pacman.setColor(Color::WHITE);
 	ghosts[0].setColor(Color::WHITE);
@@ -14,9 +15,40 @@ void Game::increaseScore() {
 
 void Game::increaseScore(int num) {
 	score += num;
+	printScore();
+}
+
+void Game::printScore() const {
+	gotoxy(0, 23);
+	setTextColor(Color::WHITE);
+	std::cout << "SCORE: ";
+
+	if (isColored) setTextColor(Color::GREEN);
+	std::cout << score;
+}
+
+void Game::printLives() const {
+	gotoxy(0, 24);
+	setTextColor(Color::WHITE);
+	std::cout << "LIVES:    ";
+
+	gotoxy(7, 24);
+	if (isColored) setTextColor(Color::RED);
+	for (size_t i = 0; i < lives; i++) {
+		std::cout << HEART;
+	}
+
+}
+
+void Game::printMenu() const {
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "1. Start a new game (with colors)" << std::endl
+		<< "2. Start a new game (without colors)" << std::endl
+		<< "8. Present instructions and keys" << std::endl
+		<< "9. EXIT" << std::endl;
 }
  
-Point Game::calculateNextPos(Point pos, Direction dir) {
+Point Game::calculateNextPos(Point pos, Direction dir) const {
 
 	Point nextPos;
 	switch (dir)
@@ -42,7 +74,7 @@ Point Game::calculateNextPos(Point pos, Direction dir) {
 	return nextPos;
 }
 
-bool Game::isWall() {
+bool Game::isWall() const {
 	Point nextPos = calculateNextPos(pacman.getPos(), pacman.getDirection());
 	if (map.getPoint(nextPos) == '#')
 		return true;
@@ -61,17 +93,10 @@ bool Game::isGhost() {
 	return false;
 }
 
-void Game::displayMenu() {
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
-		<< "1. Start a new game (with colors)" << std::endl
-		<< "2. Start a new game (without colors)" << std::endl
-		<< "8. Present instructions and keys" << std::endl
-		<< "9. EXIT" << std::endl;
-}
-
 void Game::start() {
+	clear_screen();
 	hideCursor();
-	displayMenu();
+	printMenu();
 	char key = _getch();
 
 	switch (key)
@@ -94,12 +119,6 @@ void Game::start() {
 	}
 }
 
-void Game::printScore() {
-	gotoxy(0, 23);
-	setTextColor(Color::WHITE);
-	std::cout << "SCORE: " << score << std::endl;
-}
-
 void Game::run() {
 	char key = ' ';
 	Direction dir;
@@ -107,6 +126,7 @@ void Game::run() {
 	clear_screen();
 	map.draw();
 	printScore();
+	printLives();
 
 	while (true) {
 		if (_kbhit()) {

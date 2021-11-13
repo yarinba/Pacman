@@ -1,14 +1,14 @@
 #include "Point.h"
 
-Point::Point(int _x, int _y) : x(_x), y(_y) {}
-
 Point::Point(): Point(0, 0) {}
 
-int Point::getX() {
+Point::Point(int _x, int _y) : x(_x), y(_y) {}
+
+int Point::getX() const {
 	return x;
 }
 
-int Point::getY() {
+int Point::getY() const {
 	return y;
 }
 
@@ -46,7 +46,7 @@ void Point::move(Direction dir) {
 	}
 }
 
-void Point::draw(char ch, Color color) {
+void Point::draw(char ch, Color color) const {
 	setTextColor(color);
 	gotoxy(x, y);
 	std::cout << ch;

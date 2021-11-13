@@ -1,6 +1,6 @@
 #include "Map.h"
 
-void Map::draw() {
+void Map::draw() const {
 	for (int i = 0; i < 22; i++) {
 		for (int j = 0; j < 62; j++) {
 			switch (map[i][j])
@@ -35,6 +35,6 @@ void Map::setPoint(Point coord, char newVal) {
 	map[coord.getY()][coord.getX()] = newVal;
 }
 
-char Map::getPoint(Point coord) {
+char Map::getPoint(Point coord) const {
 	return map[coord.getY()][coord.getX()];
 }

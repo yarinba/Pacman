@@ -1,7 +1,5 @@
 #include "Ghost.h"
 
-
-
 Ghost::Ghost(Point coord) {
 	pos = coord;
 }
