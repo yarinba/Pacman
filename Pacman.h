@@ -13,6 +13,7 @@ class Pacman {
 	Color color = Color::YELLOW;
 public:
 	Point getPos() const;
+	Direction getDirection() const;
 	Direction getDirection(char key) const;
 	void setDirection(Direction _direction);
 	void setColor(Color c);

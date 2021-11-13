@@ -9,5 +9,10 @@ class Ghost {
 	Direction direction = Direction::NONE;
 	Color color = Color::LIGHTMAGENTA;
 
-	// TODO: create functions
+public:
+	Ghost(Point coord);
+	Point getPos() const;
+	void setDirection(Direction _direction);
+	void setColor(Color _color);
+	void move(bool posIsBreadcrumb);
 };

@@ -2,12 +2,16 @@
 
 #include <iostream>
 #include "Map.h"
+#include "Point.h"
 #include "Enums.h"
+#include "utils.h"
 
 class Map {
 	bool isColored = true;
 	char map[22][62] = {
-		// init pos pacman: [34,17]
+		// init pos pacman: Point(17, 34)
+		// init pos ghost1: [3, 48]
+		// init pos ghost2: [3, 50]
 		"#################### #############   ###################   ##",
 		"# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #",
 		"# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #",
@@ -34,6 +38,6 @@ class Map {
 public:
 	void draw();
 	void setIsColored(bool _isColored);
-	void setPoint(int x, int y, char newVal);
-	char getPoint(int x, int y);
+	void setPoint(Point coord, char newVal);
+	char getPoint(Point coord);
 };

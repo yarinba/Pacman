@@ -1,5 +1,4 @@
 #include "Map.h"
-#include "utils.h"
 
 void Map::draw() {
 	for (int i = 0; i < 22; i++) {
@@ -32,10 +31,10 @@ void Map::setIsColored(bool _isColored) {
 	isColored = _isColored;
 }
 
-void Map::setPoint(int x, int y, char newVal) {
-	map[x][y] = newVal;
+void Map::setPoint(Point coord, char newVal) {
+	map[coord.getY()][coord.getX()] = newVal;
 }
 
-char Map::getPoint(int x, int y) {
-	return map[x][y];
+char Map::getPoint(Point coord) {
+	return map[coord.getY()][coord.getX()];
 }
