@@ -36,7 +36,7 @@ void Game::printLives() const {
 
 	gotoxy(7, 24);
 	if (isColored) setTextColor(Color::RED);
-	for (unsigned int i = 0; i < lives; i++) {
+	for (int i = 0; i < lives; i++) {
 		std::cout << HEART;
 	}
 }
@@ -161,6 +161,7 @@ bool Game::menu() {
 		exit(0);
 		break;
 	default:
+		return false;
 		break;
 	}
 }
