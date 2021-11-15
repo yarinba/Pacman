@@ -30,7 +30,7 @@ private:
 	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
 	bool isBreadcrumb() const;
 	bool isGhost() const;
-	void handleGhostsMovement(int numOfIteration);
+	void handleGhostsMovement(int numOfIterations);
 public:
 	void init();
 	bool menu();

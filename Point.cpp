@@ -21,6 +21,7 @@ void Point::set(int _x, int _y) {
 	y = _y;
 }
 
+// Get: direction - change Point position Respectively
 void Point::move(Direction dir) {
 	switch (dir) {
 	case Direction::UP:
@@ -50,6 +51,7 @@ void Point::move(Direction dir) {
 	}
 }
 
+// Get: char symbol and color - prints it at the Point position
 void Point::draw(char ch, Color color) const {
 	setTextColor(color);
 	gotoxy(x, y);

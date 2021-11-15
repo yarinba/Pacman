@@ -10,11 +10,13 @@ void Game::setNoColor() {
 	ghosts[1].setColor(Color::WHITE);
 }
 
+// increase score by 1 and prints current score
 void Game::increaseScore() {
 	score++;
 	printScore();
 }
 
+// increase score by given number and prints current score
 void Game::increaseScore(int num) {
 	score += num;
 	printScore();
@@ -42,6 +44,7 @@ void Game::printLives() const {
 }
 
 void Game::printMenu() const {
+	clear_screen();
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
 		<< "1. Start a new game (with colors)" << std::endl
 		<< "2. Start a new game (without colors)" << std::endl
@@ -56,6 +59,10 @@ void Game::printInstructions() const {
 	char key = _getch();
 }
  
+/*
+* Get: current position and direction
+* Return: Point represents the next move of given position
+*/
 Point Game::calculateNextPos(Point pos, Direction dir) const {
 
 	Point nextPos;
@@ -83,8 +90,13 @@ Point Game::calculateNextPos(Point pos, Direction dir) const {
 	return nextPos;
 }
 
+/*
+* Get: current position, direction and boolean if the Player is Pacman or Ghost
+* Return: true if the player will hit the wall, otherwise false
+*/
 bool Game::isWall(Point pos, Direction dir, bool isPacman) const {
 	Point nextPos = calculateNextPos(pos, dir);
+	//  Ghosts cannot cross in the invisible tunnels!
 	if (!isPacman) {
 		int x = nextPos.getX();
 		int y = nextPos.getY();
@@ -96,6 +108,7 @@ bool Game::isWall(Point pos, Direction dir, bool isPacman) const {
 	return false;
 }
 
+// Return: true if the Pacman hits breadcrumb, otherwise false
 bool Game::isBreadcrumb() const {
 	if (map.getPoint(pacman.getPos()) == '*') {
 		return true;
@@ -103,6 +116,7 @@ bool Game::isBreadcrumb() const {
 	return false;
 }
 
+// Return: true if the Pacman hits one of the ghosts, otherwise false
 bool Game::isGhost() const {
 	for (int i = 0; i < 2; i++) {
 		if (pacman.getPos() == ghosts[i].getPos())
@@ -111,18 +125,24 @@ bool Game::isGhost() const {
 	return false;
 }
 
-void Game::handleGhostsMovement(int numOfIteration) {
+/*
+* Get: the number of the current iteration in the game loop
+* Will execute only every second loop beacuse the pace of Ghost is half the pace of the Pacman
+*/
+void Game::handleGhostsMovement(int numOfIterations) {
 	bool isBreadcrumbPos = false;
-	if (!(numOfIteration % 2)) {
+	if (!(numOfIterations % 2)) {
 		for (int i = 0; i < 2; i++) {
+			// Change the direction of the ghost if it hits the wall
 			while (isWall(ghosts[i].getPos(), ghosts[i].getDirection(), false)) {
 				ghosts[i].setDirection();
 			}
+			// Boolean - true if the Ghost stepped on a breadcrumb, otherwise false
 			isBreadcrumbPos = (map.getPoint(ghosts[i].getPos()) == '*');
 			ghosts[i].move(isBreadcrumbPos);
 		}
 
-		if (!(numOfIteration % 20)) {
+		if (!(numOfIterations % 20)) {
 			ghosts[0].setDirection();
 			ghosts[1].setDirection();
 		}
@@ -139,8 +159,11 @@ void Game::init() {
 	ghosts[1].setDirection();
 }
 
+/*
+* Displays the menu
+* Return: true if the game should start, otherwise false 
+*/
 bool Game::menu() {
-	clear_screen();
 	printMenu();
 	char key = _getch();
 
@@ -167,7 +190,7 @@ bool Game::menu() {
 }
 
 void Game::run() {
-	int numOfIteration = 0;
+	int numOfIterations = 0;
 	char key = ' ';
 	Direction dir;
 
@@ -179,7 +202,7 @@ void Game::run() {
 
 	while (!isLose && !isWon) {
 		// Move the ghosts every 2nd iteration
-		handleGhostsMovement(numOfIteration);
+		handleGhostsMovement(numOfIterations);
 
 		if (_kbhit()) {
 			key = _getch();
@@ -209,7 +232,7 @@ void Game::run() {
 			}
 		}
 
-		numOfIteration++;
+		numOfIterations++;
 		Sleep(150);
 	}
 }

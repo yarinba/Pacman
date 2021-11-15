@@ -31,10 +31,15 @@ void Map::setIsColored(bool _isColored) {
 	isColored = _isColored;
 }
 
+// Get: Point coordinate and new char - set the new char in same coordinate on the map
 void Map::setPoint(Point coord, char newVal) {
 	map[coord.getY()][coord.getX()] = newVal;
 }
 
+/*
+* Get: Point coordinate
+* Return: current symbol in same coordinate on the map
+*/
 char Map::getPoint(Point coord) const {
 	return map[coord.getY()][coord.getX()];
 }
