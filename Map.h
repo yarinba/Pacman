@@ -9,8 +9,8 @@ class Map {
 	bool isColored = true;
 	char map[22][62] = {
 		// initial position pacman: Point(34, 17)
-		// initial position ghost1: Point(3, 48)
-		// initial position ghost2: Point(3, 50)
+		// initial position ghost1: Point(48, 3)
+		// initial position ghost2: Point(50, 3)
 		"#################### #############   ###################   ##",
 		"# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #",
 		"# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * #",

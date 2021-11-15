@@ -1,5 +1,6 @@
 #pragma once
 
+#include <time.h> 
 #include "Pacman.h"
 #include "Ghost.h"
 #include "Map.h"
@@ -24,11 +25,14 @@ private:
 	void printScore() const;
 	void printLives() const;
 	void printMenu() const;
+	void printInstructions() const;
 	Point calculateNextPos(Point pos, Direction dir) const;
-	bool isWall() const;
-	bool isBreadcrumb();
-	bool isGhost();
-	void run();
+	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
+	bool isBreadcrumb() const;
+	bool isGhost() const;
+	void handleGhostsMovement(int numOfIteration);
 public:
-	void start();
+	void init();
+	bool menu();
+	void run();
 };

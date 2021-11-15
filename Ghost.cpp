@@ -2,13 +2,22 @@
 
 Ghost::Ghost(Point coord) {
 	pos = coord;
+	direction = Direction(rand() % 4);
 }
 
 Point Ghost::getPos() const {
 	return pos;
 }
 
-void Ghost::setDirection(Direction _direction) {
+Direction Ghost::getDirection() const {
+	return direction;
+}
+
+void Ghost::setDirection() {
+	Direction _direction;
+	do {
+		_direction = Direction(rand() % 4);
+	} while (_direction == direction);
 	direction = _direction;
 }
 

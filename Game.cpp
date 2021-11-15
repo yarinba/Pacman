@@ -1,5 +1,7 @@
 ﻿#include "Game.h"
 
+/* Private Functions */
+
 void Game::setNoColor() {
 	isColored = false;
 	map.setIsColored(false);
@@ -34,10 +36,9 @@ void Game::printLives() const {
 
 	gotoxy(7, 24);
 	if (isColored) setTextColor(Color::RED);
-	for (size_t i = 0; i < lives; i++) {
+	for (unsigned int i = 0; i < lives; i++) {
 		std::cout << HEART;
 	}
-
 }
 
 void Game::printMenu() const {
@@ -46,6 +47,13 @@ void Game::printMenu() const {
 		<< "2. Start a new game (without colors)" << std::endl
 		<< "8. Present instructions and keys" << std::endl
 		<< "9. EXIT" << std::endl;
+}
+
+void Game::printInstructions() const {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Instructions <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Press any key to continue :)" << std::endl;
+	char key = _getch();
 }
  
 Point Game::calculateNextPos(Point pos, Direction dir) const {
@@ -66,6 +74,7 @@ Point Game::calculateNextPos(Point pos, Direction dir) const {
 		nextPos.set(pos.getX() + 1, pos.getY());
 		break;
 	case Direction::STAY:
+	case Direction::NONE:
 		return pos;
 		break;
 	default:
@@ -74,42 +83,79 @@ Point Game::calculateNextPos(Point pos, Direction dir) const {
 	return nextPos;
 }
 
-bool Game::isWall() const {
-	Point nextPos = calculateNextPos(pacman.getPos(), pacman.getDirection());
+bool Game::isWall(Point pos, Direction dir, bool isPacman) const {
+	Point nextPos = calculateNextPos(pos, dir);
+	if (!isPacman) {
+		int x = nextPos.getX();
+		int y = nextPos.getY();
+		if (x == 0 || x == 21 || y == 0 || y == 61)
+			return true;
+	}
 	if (map.getPoint(nextPos) == '#')
 		return true;
 	return false;
 }
 
-bool Game::isBreadcrumb() {
+bool Game::isBreadcrumb() const {
 	if (map.getPoint(pacman.getPos()) == '*') {
-		map.setPoint(pacman.getPos(), ' ');
 		return true;
 	}
 	return false;
 }
 
-bool Game::isGhost() {
+bool Game::isGhost() const {
+	for (int i = 0; i < 2; i++) {
+		if (pacman.getPos() == ghosts[i].getPos())
+			return true;
+	}
 	return false;
 }
 
-void Game::start() {
-	clear_screen();
+void Game::handleGhostsMovement(int numOfIteration) {
+	bool isBreadcrumbPos = false;
+	if (!(numOfIteration % 2)) {
+		for (int i = 0; i < 2; i++) {
+			while (isWall(ghosts[i].getPos(), ghosts[i].getDirection(), false)) {
+				ghosts[i].setDirection();
+			}
+			isBreadcrumbPos = (map.getPoint(ghosts[i].getPos()) == '*');
+			ghosts[i].move(isBreadcrumbPos);
+		}
+
+		if (!(numOfIteration % 20)) {
+			ghosts[0].setDirection();
+			ghosts[1].setDirection();
+		}
+	}
+}
+
+/* Public Functions */
+
+void Game::init() {
 	hideCursor();
+	setTextColor(Color::WHITE);
+	srand(time(NULL));
+	ghosts[0].setDirection();
+	ghosts[1].setDirection();
+}
+
+bool Game::menu() {
+	clear_screen();
 	printMenu();
 	char key = _getch();
 
 	switch (key)
 	{
 	case '1':
-		run();
+		return true;
 		break;
 	case '2':
 		setNoColor();
-		run();
+		return true;
 		break;
 	case '8':
-		// display instructions and keys
+		printInstructions();
+		return false;
 		break;
 	case '9':
 		exit(0);
@@ -120,6 +166,7 @@ void Game::start() {
 }
 
 void Game::run() {
+	int numOfIteration = 0;
 	char key = ' ';
 	Direction dir;
 
@@ -128,7 +175,11 @@ void Game::run() {
 	printScore();
 	printLives();
 
-	while (true) {
+
+	while (!isLose && !isWon) {
+		// Move the ghosts every 2nd iteration
+		handleGhostsMovement(numOfIteration);
+
 		if (_kbhit()) {
 			key = _getch();
 			if ((dir = pacman.getDirection(key)) != Direction::NONE) {
@@ -136,21 +187,28 @@ void Game::run() {
 			}
 		}
 
-		if (isWall()) {
+		if (isWall(pacman.getPos(), pacman.getDirection())) {
 			pacman.setDirection(Direction::STAY);
-		}
-		else {
+		} else {
 			pacman.move();
 		}
 
 		if (isBreadcrumb()) {
+			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
 			increaseScore();
 		}
 		if (isGhost()) {
-			// handle ghost
+			lives--;
+			if (lives) {
+				printLives();
+			}
+			else {
+				isLose = true;
+			}
 		}
 
-		Sleep(250);
+		numOfIteration++;
+		Sleep(150);
 	}
 }

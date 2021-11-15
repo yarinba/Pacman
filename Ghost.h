@@ -12,7 +12,8 @@ class Ghost {
 public:
 	Ghost(Point coord);
 	Point getPos() const;
-	void setDirection(Direction _direction);
+	Direction getDirection() const;
+	void setDirection();
 	void setColor(Color _color);
 	void move(bool posIsBreadcrumb);
 };
