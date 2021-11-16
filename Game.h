@@ -20,17 +20,25 @@ class Game {
 	Ghost ghosts[2] = {Ghost(Point(48,3)), Ghost(Point(50,3))};
 private:
 	void setNoColor();
+	void setColor();
 	void increaseScore();
 	void increaseScore(int num);
 	void printScore() const;
 	void printLives() const;
 	void printMenu() const;
+	void printLose() const;
+	void printWon() const;
 	void printInstructions() const;
+	void printPause() const;
+	void clearPause() const;
 	Point calculateNextPos(Point pos, Direction dir) const;
 	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
 	bool isBreadcrumb() const;
 	bool isGhost() const;
+	void handleHitGhost();
 	void handleGhostsMovement(int numOfIterations);
+	void hitESC(Direction prevPacmanDirection);
+	void initCreatures();
 public:
 	void init();
 	bool menu();

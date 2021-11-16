@@ -1,9 +1,5 @@
 #include "Pacman.h"
 
-Point Pacman::getPos() const{
-	return pos;
-}
-
 // Return the Pacman direction
 Direction Pacman::getDirection() const {
 	return direction;
@@ -19,6 +15,14 @@ Direction Pacman::getDirection(char key) const {
 			return (Direction)i;
 	}
 	return Direction::NONE;
+}
+
+Point Pacman::getPos() const {
+	return pos;
+}
+
+void Pacman::setPos(int x, int y) {
+	pos.set(x, y);
 }
 
 void Pacman::setDirection(Direction _direction) {

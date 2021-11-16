@@ -10,6 +10,14 @@ void Game::setNoColor() {
 	ghosts[1].setColor(Color::WHITE);
 }
 
+void Game::setColor() {
+	isColored = true;
+	map.setIsColored(true);
+	pacman.setColor(Color::YELLOW);
+	ghosts[0].setColor(Color::LIGHTMAGENTA);
+	ghosts[1].setColor(Color::LIGHTMAGENTA);
+}
+
 // increase score by 1 and prints current score
 void Game::increaseScore() {
 	score++;
@@ -55,8 +63,44 @@ void Game::printMenu() const {
 void Game::printInstructions() const {
 	clear_screen();
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Instructions <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Goal: Guide the Pacman around the maze and eat all the breadcrumbs while avoiding the ghosts." << std::endl
+		<< "Keys :" << std::endl
+		<< "W - Up" << std::endl
+		<< "X - Down" << std::endl
+		<< "D - Right" << std::endl
+		<< "A - Left" << std::endl
+		<< "S - Stay" << std::endl << std::endl
 		<< "Press any key to continue :)" << std::endl;
+
 	char key = _getch();
+}
+
+void Game::printLose() const {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> OH! TOO BAD - YOU LOSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Press any key to continue :)" << std::endl;
+}
+
+void Game::printWon() const {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> CONGRATULATIONS - YOU WON! <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Press any key to continue :)" << std::endl;
+
+}
+
+void Game::printPause() const {
+	setTextColor(Color::WHITE);
+	gotoxy(40, 23);
+	std::cout << ">>>> Game Paused <<<<";
+	gotoxy(40, 24);
+	std::cout << "Press ESC to continue";
+}
+
+void Game::clearPause() const {
+	gotoxy(40, 23);
+	std::cout << "                     ";
+	gotoxy(40, 24);
+	std::cout << "                     ";
 }
  
 /*
@@ -100,7 +144,7 @@ bool Game::isWall(Point pos, Direction dir, bool isPacman) const {
 	if (!isPacman) {
 		int x = nextPos.getX();
 		int y = nextPos.getY();
-		if (x == 0 || x == 21 || y == 0 || y == 61)
+		if (y == 0 || y == MAP_BOUNDARIES::Y - 1 || x == 0 || x == MAP_BOUNDARIES::X - 1)
 			return true;
 	}
 	if (map.getPoint(nextPos) == '#')
@@ -149,14 +193,50 @@ void Game::handleGhostsMovement(int numOfIterations) {
 	}
 }
 
+void Game::hitESC(Direction prevPacmanDirection) {
+	char key = ' ';
+	printPause();
+	pacman.setDirection(Direction::NONE);
+	ghosts[0].setDirection(Direction::NONE);
+	ghosts[1].setDirection(Direction::NONE);
+	do {
+		key = _getch();
+	} while (key != ESC);
+	clearPause();
+	ghosts[0].setDirection();
+	ghosts[1].setDirection();
+	pacman.setDirection(prevPacmanDirection);
+}
+
+void Game::initCreatures() {
+	pacman.setDirection(Direction::NONE);
+	pacman.setPos(34, 17);
+	ghosts[0].setPos(48, 3);
+	ghosts[1].setPos(50, 3);
+	ghosts[0].setDirection();
+	ghosts[1].setDirection();
+}
+
+void Game::handleHitGhost() {
+	lives--;
+	initCreatures();
+	map.draw();
+}
+
 /* Public Functions */
 
 void Game::init() {
+	isWon = false;
+	isLose = false;
+	eatenBreadcrumbs = 0;
+	score = 0;
+	lives = 3;
+
+	map.init();
+	initCreatures();
 	hideCursor();
 	setTextColor(Color::WHITE);
 	srand(time(NULL));
-	ghosts[0].setDirection();
-	ghosts[1].setDirection();
 }
 
 /*
@@ -170,6 +250,7 @@ bool Game::menu() {
 	switch (key)
 	{
 	case '1':
+		setColor();
 		return true;
 		break;
 	case '2':
@@ -206,7 +287,10 @@ void Game::run() {
 
 		if (_kbhit()) {
 			key = _getch();
-			if ((dir = pacman.getDirection(key)) != Direction::NONE) {
+			if (key == ESC) {
+				hitESC(pacman.getDirection());
+			}
+			else if ((dir = pacman.getDirection(key)) != Direction::NONE) {
 				pacman.setDirection(dir);
 			}
 		}
@@ -221,9 +305,11 @@ void Game::run() {
 			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
 			increaseScore();
+			if (eatenBreadcrumbs == BREADCRUMBS)
+				isWon = true;
 		}
 		if (isGhost()) {
-			lives--;
+			handleHitGhost();
 			if (lives) {
 				printLives();
 			}
@@ -235,4 +321,10 @@ void Game::run() {
 		numOfIterations++;
 		Sleep(150);
 	}
+
+	if (isLose)
+		printLose();
+	else if (isWon)
+		printWon();
+	key = _getch();
 }

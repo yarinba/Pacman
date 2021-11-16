@@ -11,9 +11,10 @@ class Pacman {
 	Direction direction = Direction::NONE;
 	Color color = Color::YELLOW;
 public:
-	Point getPos() const;
 	Direction getDirection() const;
 	Direction getDirection(char key) const;
+	Point getPos() const;
+	void setPos(int x, int y);
 	void setDirection(Direction _direction);
 	void setColor(Color c);
 	void move();

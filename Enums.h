@@ -28,3 +28,6 @@ enum class Direction {
 	RIGHT,
 	STAY
 };
+
+enum MAP_BOUNDARIES { X = 61, Y = 22 };
+

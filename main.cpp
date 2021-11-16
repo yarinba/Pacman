@@ -7,9 +7,11 @@ int main() {
 	bool isStartPressed = false;
 	Game game;
 
-	game.init();
-	do {
-		isStartPressed = game.menu();
-	} while (!isStartPressed);
-	game.run();
+	while (true) {
+		game.init();
+		do {
+			isStartPressed = game.menu();
+		} while (!isStartPressed);
+		game.run();
+	}
 }

@@ -13,12 +13,20 @@ Direction Ghost::getDirection() const {
 	return direction;
 }
 
+void Ghost::setPos(int x, int y) {
+	pos.set(x, y);
+}
+
 // Set an new random direction to Ghost (different from its predecessor)
 void Ghost::setDirection() {
 	Direction _direction;
 	do {
 		_direction = Direction(rand() % 4);
 	} while (_direction == direction);
+	direction = _direction;
+}
+
+void Ghost::setDirection(Direction _direction) {
 	direction = _direction;
 }
 
