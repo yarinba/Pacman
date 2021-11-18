@@ -34,6 +34,8 @@ void Map::init() {
 	}
 }
 
+
+/*This function drawing each symbol according to the color we set for it*/
 void Map::draw() const {
 	gotoxy(0, 0);
 	for (int i = 0; i < MAP_BOUNDARIES::Y; i++) {
