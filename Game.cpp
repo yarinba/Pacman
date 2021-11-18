@@ -1,4 +1,4 @@
-﻿#include "Game.h"
+#include "Game.h"
 
 /* Private Functions */
 
@@ -39,6 +39,7 @@ void Game::printScore() const {
 	std::cout << score;
 }
 
+/*Printing how many lives the user has*/
 void Game::printLives() const {
 	gotoxy(0, 24);
 	setTextColor(Color::WHITE);
@@ -75,11 +76,13 @@ void Game::printInstructions() const {
 	char key = _getch();
 }
 
+
 void Game::printLose() const {
 	clear_screen();
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> OH! TOO BAD - YOU LOSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
 		<< "Press any key to continue :)" << std::endl;
 }
+
 
 void Game::printWon() const {
 	clear_screen();
@@ -96,13 +99,14 @@ void Game::printPause() const {
 	std::cout << "Press ESC to continue";
 }
 
+/*deletes the messeage that the game is paused*/
 void Game::clearPause() const {
 	gotoxy(40, 23);
 	std::cout << "                     ";
 	gotoxy(40, 24);
 	std::cout << "                     ";
 }
- 
+
 /*
 * Get: current position and direction
 * Return: Point represents the next move of given position
@@ -193,6 +197,8 @@ void Game::handleGhostsMovement(int numOfIterations) {
 	}
 }
 
+
+/*if the player hits Esc than the game will be paused*/
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
 	printPause();
@@ -203,11 +209,12 @@ void Game::hitESC(Direction prevPacmanDirection) {
 		key = _getch();
 	} while (key != ESC);
 	clearPause();
-	ghosts[0].setDirection();
+	ghosts[0].setDirection();/*returning ghost and pacman their original direction*/
 	ghosts[1].setDirection();
 	pacman.setDirection(prevPacmanDirection);
 }
 
+/*This function initiallizing the positions of the ghosts and pacman*/
 void Game::initCreatures() {
 	pacman.setDirection(Direction::NONE);
 	pacman.setPos(34, 17);
@@ -217,6 +224,7 @@ void Game::initCreatures() {
 	ghosts[1].setDirection();
 }
 
+/*This function reducing the number of lives by 1 and returning pacman and the ghosts to their starting point in case that pacman hits a ghost*/
 void Game::handleHitGhost() {
 	lives--;
 	initCreatures();
@@ -241,7 +249,7 @@ void Game::init() {
 
 /*
 * Displays the menu
-* Return: true if the game should start, otherwise false 
+* Return: true if the game should start, otherwise false
 */
 bool Game::menu() {
 	printMenu();
@@ -288,19 +296,22 @@ void Game::run() {
 		if (_kbhit()) {
 			key = _getch();
 			if (key == ESC) {
-				hitESC(pacman.getDirection());
+				hitESC(pacman.getDirection()); /*pause the game*/
 			}
 			else if ((dir = pacman.getDirection(key)) != Direction::NONE) {
 				pacman.setDirection(dir);
 			}
 		}
 
+		/*if pacman hits a wall than he will stop*/
 		if (isWall(pacman.getPos(), pacman.getDirection())) {
 			pacman.setDirection(Direction::STAY);
-		} else {
+		}
+		else {
 			pacman.move();
 		}
 
+		/*if pacman ate breadcrumb*/
 		if (isBreadcrumb()) {
 			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
@@ -308,6 +319,7 @@ void Game::run() {
 			if (eatenBreadcrumbs == BREADCRUMBS)
 				isWon = true;
 		}
+		/*if pacman hit a ghost*/
 		if (isGhost()) {
 			handleHitGhost();
 			if (lives) {
