@@ -21,90 +21,13 @@ void Game::setColor() {
 // increase score by 1 and prints current score
 void Game::increaseScore() {
 	score++;
-	printScore();
+	Print::score(*this);
 }
 
 // increase score by given number and prints current score
 void Game::increaseScore(int num) {
 	score += num;
-	printScore();
-}
-
-void Game::printScore() const {
-	gotoxy(0, 23);
-	setTextColor(Color::WHITE);
-	std::cout << "SCORE: ";
-
-	if (isColored) setTextColor(Color::GREEN);
-	std::cout << score;
-}
-
-/*Printing how many lives the user has*/
-void Game::printLives() const {
-	gotoxy(0, 24);
-	setTextColor(Color::WHITE);
-	std::cout << "LIVES:    ";
-
-	gotoxy(7, 24);
-	if (isColored) setTextColor(Color::RED);
-	for (int i = 0; i < lives; i++) {
-		std::cout << HEART;
-	}
-}
-
-void Game::printMenu() const {
-	clear_screen();
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
-		<< "1. Start a new game (with colors)" << std::endl
-		<< "2. Start a new game (without colors)" << std::endl
-		<< "8. Present instructions and keys" << std::endl
-		<< "9. EXIT" << std::endl;
-}
-
-void Game::printInstructions() const {
-	clear_screen();
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Instructions <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
-		<< "Goal: Guide the Pacman around the maze and eat all the breadcrumbs while avoiding the ghosts." << std::endl
-		<< "Keys :" << std::endl
-		<< "W - Up" << std::endl
-		<< "X - Down" << std::endl
-		<< "D - Right" << std::endl
-		<< "A - Left" << std::endl
-		<< "S - Stay" << std::endl << std::endl
-		<< "Press any key to continue :)" << std::endl;
-
-	char key = _getch();
-}
-
-
-void Game::printLose() const {
-	clear_screen();
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> OH! TOO BAD - YOU LOSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
-		<< "Press any key to continue :)" << std::endl;
-}
-
-
-void Game::printWon() const {
-	clear_screen();
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> CONGRATULATIONS - YOU WON! <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
-		<< "Press any key to continue :)" << std::endl;
-
-}
-
-void Game::printPause() const {
-	setTextColor(Color::WHITE);
-	gotoxy(40, 23);
-	std::cout << ">>>> Game Paused <<<<";
-	gotoxy(40, 24);
-	std::cout << "Press ESC to continue";
-}
-
-/*deletes the messeage that the game is paused*/
-void Game::clearPause() const {
-	gotoxy(40, 23);
-	std::cout << "                     ";
-	gotoxy(40, 24);
-	std::cout << "                     ";
+	Print::score(*this);
 }
 
 /*
@@ -201,15 +124,17 @@ void Game::handleGhostsMovement(int numOfIterations) {
 /*if the player hits Esc than the game will be paused*/
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
-	printPause();
+	Print::pause();
 	pacman.setDirection(Direction::NONE);
 	ghosts[0].setDirection(Direction::NONE);
 	ghosts[1].setDirection(Direction::NONE);
 	do {
 		key = _getch();
 	} while (key != ESC);
-	clearPause();
-	ghosts[0].setDirection();/*returning ghost and pacman their original direction*/
+
+  /*returning ghost and pacman their original direction*/
+	Print::clearPause();
+	ghosts[0].setDirection();
 	ghosts[1].setDirection();
 	pacman.setDirection(prevPacmanDirection);
 }
@@ -252,7 +177,7 @@ void Game::init() {
 * Return: true if the game should start, otherwise false
 */
 bool Game::menu() {
-	printMenu();
+	Print::menu();
 	char key = _getch();
 
 	switch (key)
@@ -266,7 +191,7 @@ bool Game::menu() {
 		return true;
 		break;
 	case '8':
-		printInstructions();
+		Print::instructions();
 		return false;
 		break;
 	case '9':
@@ -285,8 +210,8 @@ void Game::run() {
 
 	clear_screen();
 	map.draw();
-	printScore();
-	printLives();
+	Print::score(*this);
+	Print::lives(*this);
 
 
 	while (!isLose && !isWon) {
@@ -323,7 +248,7 @@ void Game::run() {
 		if (isGhost()) {
 			handleHitGhost();
 			if (lives) {
-				printLives();
+				Print::lives(*this);
 			}
 			else {
 				isLose = true;
@@ -335,8 +260,8 @@ void Game::run() {
 	}
 
 	if (isLose)
-		printLose();
+		Print::lose();
 	else if (isWon)
-		printWon();
+		Print::won();
 	key = _getch();
 }

@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "utils.h"
 #include "Point.h"
+#include "Print.h"
 
 class Game {
 	enum { ESC = 27, BREADCRUMBS = 430 };
@@ -18,19 +19,12 @@ class Game {
 	Map map;
 	Pacman pacman;
 	Ghost ghosts[2] = {Ghost(Point(48,3)), Ghost(Point(50,3))};
+	friend class Print;
 private:
 	void setNoColor();
 	void setColor();
 	void increaseScore();
 	void increaseScore(int num);
-	void printScore() const;
-	void printLives() const;
-	void printMenu() const;
-	void printLose() const;
-	void printWon() const;
-	void printInstructions() const;
-	void printPause() const;
-	void clearPause() const;
 	Point calculateNextPos(Point pos, Direction dir) const;
 	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
 	bool isBreadcrumb() const;
