@@ -11,7 +11,7 @@ class Ghost {
 
 public:
 	Ghost(Point coord);
-	Point getPos() const;
+	const Point& getPos() const;
 	Direction getDirection() const;
 	void setPos(int x, int y);
 	void setDirection();

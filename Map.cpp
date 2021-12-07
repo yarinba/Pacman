@@ -69,7 +69,7 @@ void Map::setIsColored(bool _isColored) {
 }
 
 // Get: Point coordinate and new char - set the new char in same coordinate on the map
-void Map::setPoint(Point coord, char newVal) {
+void Map::setPoint(const Point& coord, char newVal) {
 	map[coord.getY()][coord.getX()] = newVal;
 }
 
@@ -77,6 +77,6 @@ void Map::setPoint(Point coord, char newVal) {
 * Get: Point coordinate
 * Return: current symbol in same coordinate on the map
 */
-char Map::getPoint(Point coord) const {
+char Map::getPoint(const Point& coord) const {
 	return map[coord.getY()][coord.getX()];
 }

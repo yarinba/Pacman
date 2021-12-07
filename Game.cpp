@@ -120,7 +120,6 @@ void Game::handleGhostsMovement(int numOfIterations) {
 	}
 }
 
-
 /*if the player hits Esc than the game will be paused*/
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';

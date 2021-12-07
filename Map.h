@@ -13,6 +13,6 @@ public:
 	void init();
 	void draw() const;
 	void setIsColored(bool _isColored);
-	void setPoint(Point coord, char newVal);
-	char getPoint(Point coord) const;
+	void setPoint(const Point& coord, char newVal);
+	char getPoint(const Point& coord) const;
 };
