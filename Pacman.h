@@ -13,7 +13,7 @@ class Pacman {
 public:
 	Direction getDirection() const;
 	Direction getDirection(char key) const;
-	Point getPos() const;
+	const Point& getPos() const;
 	void setPos(int x, int y);
 	void setDirection(Direction _direction);
 	void setColor(Color c);

@@ -17,7 +17,7 @@ Direction Pacman::getDirection(char key) const {
 	return Direction::NONE;
 }
 
-Point Pacman::getPos() const {
+const Point& Pacman::getPos() const {
 	return pos;
 }
 

@@ -5,7 +5,7 @@ Ghost::Ghost(Point coord) {
 	direction = Direction(rand() % 4);
 }
 
-Point Ghost::getPos() const {
+const Point& Ghost::getPos() const {
 	return pos;
 }
 
