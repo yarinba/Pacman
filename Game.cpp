@@ -148,7 +148,7 @@ void Game::initCreatures() {
 	ghosts[1].setDirection();
 }
 
-/*This function reducing the number of lives by 1 and returning pacman and the ghosts to their starting point in case that pacman hits a ghost*/
+/*This function reducing the number of lives by 1 and returning pacman and the ghosts to their starting position in case that pacman hits a ghost*/
 void Game::handleHitGhost() {
 	lives--;
 	initCreatures();
@@ -264,3 +264,4 @@ void Game::run() {
 		Print::won();
 	key = _getch();
 }
+

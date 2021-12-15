@@ -52,6 +52,12 @@ void Print::clearPause() {
 	std::cout << "                     ";
 }
 
+void Print::noFiles()
+{
+	clear_screen();
+	std::cout << "No files found" << std::endl;
+}
+
 void Print::score(const Game& game) {
 	gotoxy(0, 23);
 	setTextColor(Color::WHITE);
@@ -72,3 +78,5 @@ void Print::lives(const Game& game) {
 		std::cout << HEART;
 	}
 }
+
+ 
