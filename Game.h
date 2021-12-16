@@ -3,6 +3,9 @@
 #include <time.h> 
 #include "Pacman.h"
 #include "Ghost.h"
+#include "GhostNovice.h"
+#include "GhostGood.h"
+#include "GhostBest.h"
 #include "Map.h"
 #include "utils.h"
 #include "Point.h"
@@ -18,21 +21,21 @@ class Game {
 	int lives = 3;
 	Map map;
 	Pacman pacman;
-	Ghost ghosts[2] = {Ghost(Point(48,3)), Ghost(Point(50,3))};
+	Ghost** ghosts;
 	friend class Print;
 private:
 	void setNoColor();
 	void setColor();
 	void increaseScore();
 	void increaseScore(int num);
-	Point calculateNextPos(Point pos, Direction dir) const;
-	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
 	bool isBreadcrumb() const;
 	bool isGhost() const;
 	void handleHitGhost();
 	void handleGhostsMovement(int numOfIterations);
 	void hitESC(Direction prevPacmanDirection);
-	void initCreatures();
+	void initCreatures(bool newGame = true);
+	void chooseLevel();
+	void setGhostsLevel(char level);
 public:
 	void init();
 	bool menu();

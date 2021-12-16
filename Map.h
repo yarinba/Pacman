@@ -6,9 +6,8 @@
 #include <string>
 #include "Pacman.h"
 #include "Ghost.h"
+#include "Movement.h"
 #include <fstream>
-
-
 
 class Map {
 	bool isColored = true;
@@ -21,8 +20,13 @@ class Map {
 	Point GhostPos[4];
 	Point mapStartingPoint;
 	Point dataPos;
+  friend class Movement;
+  
+private:
 	void handleLegend(std::fstream& myfile, std::string &line, int& mapCol, int& currChar);
 	void handleChar(char value, int& currCol);
+  Point calculateNextPos(Point pos, Direction dir) const;
+
 public:
 	void init(const char* fileName);
 	void getBoard(const char* fileName);
@@ -30,4 +34,9 @@ public:
 	void setIsColored(bool _isColored);
 	void setPoint(const Point& coord, char newVal);
 	char getPoint(const Point& coord) const;
+	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
+	bool isInBoundaries(int row, int col) const {
+		return (row > 0) && (col > 0)
+			&& (row < rowSize) && (col < colSize);
+	}
 };

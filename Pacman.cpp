@@ -1,9 +1,7 @@
 #include "Pacman.h"
 
-// Return the Pacman direction
-Direction Pacman::getDirection() const {
-	return direction;
-}
+Pacman::Pacman(): 
+	Creature(Point(34, 17), Direction::NONE, Color::YELLOW, '@') {}
 
 /*
 * Get: key pressed by the user
@@ -15,22 +13,6 @@ Direction Pacman::getDirection(char key) const {
 			return (Direction)i;
 	}
 	return Direction::NONE;
-}
-
-const Point& Pacman::getPos() const {
-	return pos;
-}
-
-void Pacman::setPos(int x, int y) {
-	pos.set(x, y);
-}
-
-void Pacman::setDirection(Direction _direction) {
-	direction = _direction;
-}
-
-void Pacman::setColor(Color _color) {
-	color = _color;
 }
 
 /*

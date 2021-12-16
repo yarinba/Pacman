@@ -52,8 +52,15 @@ void Print::clearPause() {
 	std::cout << "                     ";
 }
 
-void Print::noFiles()
-{
+void Print::chooseLevel() {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Difficulty Level <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Please choose the difficulty level of the game:" << std::endl
+		<< "1 - Novice" << std::endl
+		<< "2 - Good" << std::endl
+		<< "3 - Best" << std::endl;
+
+void Print::noFiles() {
 	clear_screen();
 	std::cout << "No files found" << std::endl;
 }
