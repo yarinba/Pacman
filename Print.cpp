@@ -59,6 +59,10 @@ void Print::chooseLevel() {
 		<< "1 - Novice" << std::endl
 		<< "2 - Good" << std::endl
 		<< "3 - Best" << std::endl;
+
+void Print::noFiles() {
+	clear_screen();
+	std::cout << "No files found" << std::endl;
 }
 
 void Print::score(const Game& game) {
@@ -81,3 +85,5 @@ void Print::lives(const Game& game) {
 		std::cout << HEART;
 	}
 }
+
+ 

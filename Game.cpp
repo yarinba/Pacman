@@ -88,6 +88,7 @@ void Game::initCreatures(bool newGame) {
 	}
 }
 
+
 // Reducing lives by 1 
 // Initiallize pacman and ghosts positions
 void Game::handleHitGhost() {
@@ -239,3 +240,4 @@ void Game::run() {
 		Print::won();
 	key = _getch();
 }
+
