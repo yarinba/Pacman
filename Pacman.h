@@ -1,21 +1,13 @@
 #pragma once
 
 #include <cctype>
-#include "Point.h"
-#include "Enums.h"
+#include "Creature.h"
 
-class Pacman {
-	const char symbol = '@';
+class Pacman: public Creature {
 	const char arrowKeys[5] = { 'w', 'x', 'a', 'd', 's'};
-	Point pos = Point(34, 17);
-	Direction direction = Direction::NONE;
-	Color color = Color::YELLOW;
 public:
-	Direction getDirection() const;
+	Pacman();
+	using Creature::getDirection;
 	Direction getDirection(char key) const;
-	const Point& getPos() const;
-	void setPos(int x, int y);
-	void setDirection(Direction _direction);
-	void setColor(Color c);
 	void move();
 };

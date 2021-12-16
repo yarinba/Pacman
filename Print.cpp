@@ -52,6 +52,15 @@ void Print::clearPause() {
 	std::cout << "                     ";
 }
 
+void Print::chooseLevel() {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Difficulty Level <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Please choose the difficulty level of the game:" << std::endl
+		<< "1 - Novice" << std::endl
+		<< "2 - Good" << std::endl
+		<< "3 - Best" << std::endl;
+}
+
 void Print::score(const Game& game) {
 	gotoxy(0, 23);
 	setTextColor(Color::WHITE);

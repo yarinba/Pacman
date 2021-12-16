@@ -1,21 +1,12 @@
 #pragma once
 
-#include "Point.h"
-#include "Enums.h"
+#include "Creature.h"
+#include "Map.h"
 
-class Ghost {
-	const char symbol = '$';
-	Point pos;
-	Direction direction = Direction::NONE;
-	Color color = Color::LIGHTMAGENTA;
+class Ghost: public Creature {
 
 public:
-	Ghost(Point coord);
-	const Point& getPos() const;
-	Direction getDirection() const;
-	void setPos(int x, int y);
-	void setDirection();
-	void setDirection(Direction _direction);
-	void setColor(Color _color);
-	void move(bool posIsBreadcrumb);
+	Ghost() :
+		Creature(Point(0, 0), Direction(rand() % 4), Color::LIGHTMAGENTA, '$') {}
+	virtual void move(const Map& map, const Point& pacmanPos ,int iterationNumber) = 0;
 };
