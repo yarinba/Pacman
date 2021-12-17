@@ -7,7 +7,6 @@ void Map::init(const char* fileName) {
 		strcpy(map[i], "                                                             ");
 
 	getBoard(fileName);
-
 }
 
 void Map:: getBoard(const char* fileName)
@@ -23,8 +22,8 @@ void Map:: getBoard(const char* fileName)
 
 	colSize = size(line);
 
-
-	while (rowSize < MAP_BOUNDARIES::Y) { //change to !eof
+	//TODO: change to !eof
+	while (rowSize < MAP_BOUNDARIES::Y) { 
 		while (currMapCol < colSize){
 			if (line[i] == '&')
 			{

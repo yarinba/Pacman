@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Creature.h"
 #include "Map.h"
+#include "Creature.h"
 
 class Ghost: public Creature {
 

@@ -1,11 +1,10 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
-#include "Game.h"
 #include <string>
-#include "Map.h"
+#include "Game.h"
 
-int main(int argc,char* argv[]) {
+int main(int argc, char* argv[]) {
 	bool isStartPressed = false;
 	Game game;
 
@@ -16,6 +15,7 @@ int main(int argc,char* argv[]) {
 			isStartPressed = game.menu();
 		} while (!isStartPressed);
 		game.run();
-	
+	}
 
+	return 0;
 }

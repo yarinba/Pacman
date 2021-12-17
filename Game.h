@@ -1,14 +1,14 @@
 #pragma once
 
 #include <time.h> 
-#include "Pacman.h"
+#include "Point.h"
+#include "Map.h"
 #include "Ghost.h"
 #include "GhostNovice.h"
 #include "GhostGood.h"
 #include "GhostBest.h"
-#include "Map.h"
+#include "Pacman.h"
 #include "utils.h"
-#include "Point.h"
 #include "Print.h"
 
 class Game {

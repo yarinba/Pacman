@@ -3,18 +3,20 @@
 /* Private Functions */
 
 void Game::setNoColor() {
+	int numofGhosts = map.getNumOfGhosts();
 	isColored = false;
 	map.setIsColored(false);
 	pacman.setColor(Color::WHITE);
-	for(int i=0; i<map.numOfGhosts; i++)
+	for(int i=0; i< numofGhosts; i++)
 		ghosts[i]->setColor(Color::WHITE);
 }
 
 void Game::setColor() {
+	int numofGhosts = map.getNumOfGhosts();
 	isColored = true;
 	map.setIsColored(true);
 	pacman.setColor(Color::YELLOW);
-	for (int i = 0; i < map.numOfGhosts; i++)
+	for (int i = 0; i < numofGhosts; i++)
 		ghosts[i]->setColor(Color::LIGHTMAGENTA);
 }
 
@@ -40,7 +42,8 @@ bool Game::isBreadcrumb() const {
 
 // Return: true if the Pacman hits one of the ghosts, otherwise false
 bool Game::isGhost() const {
-	for (int i = 0; i < map.numOfGhosts; i++) {
+	int numofGhosts = map.getNumOfGhosts();
+	for (int i = 0; i < numofGhosts; i++) {
 		if (pacman.getPos() == ghosts[i]->getPos())
 			return true;
 	}
@@ -52,8 +55,9 @@ bool Game::isGhost() const {
 * Execute only every second loop beacuse the pace of Ghost is half the pace of the Pacman
 */
 void Game::handleGhostsMovement(int numOfIterations) {
+	int numofGhosts = map.getNumOfGhosts();
 	if (!(numOfIterations % 2)) {
-		for (int i = 0; i < map.numOfGhosts; i++)
+		for (int i = 0; i < numofGhosts; i++)
 			ghosts[i]->move(map, pacman.getPos(), numOfIterations);
 	}
 }
@@ -61,9 +65,10 @@ void Game::handleGhostsMovement(int numOfIterations) {
 // The game will be paused after Esc was hit
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
+	int numofGhosts = map.getNumOfGhosts();
 	Print::pause();
 	pacman.setDirection(Direction::NONE);
-	for (int i = 0; i < map.numOfGhosts; i++)
+	for (int i = 0; i < numofGhosts; i++)
 		ghosts[i]->setDirection(Direction::NONE);
 	do {
 		key = _getch();
@@ -75,14 +80,16 @@ void Game::hitESC(Direction prevPacmanDirection) {
 
 // Initiallizing pacman position and array of ghosts
 void Game::initCreatures(bool newGame) {
+	int numofGhosts = map.getNumOfGhosts();
 	pacman.setDirection(Direction::NONE);
-	pacman.setPos(map.pacmanLocation);
+	pacman.setPos(map.getPacmanPos());
 	//TODO: delete previous allocation if exits
 	if(newGame)
-		ghosts = new Ghost*[map.numOfGhosts];
+		ghosts = new Ghost*[numofGhosts];
 	else {
-		for (int i = 0; i < map.numOfGhosts; i++) {
-			ghosts[i]->setPos(map.GhostsLocations[i]);
+		const Point* ghostsPos = map.getGhostsPos();
+		for (int i = 0; i < numofGhosts; i++) {
+			ghosts[i]->setPos(ghostsPos[i]);
 			ghosts[i]->setDirection(Direction::NONE);
 		}
 	}
@@ -99,7 +106,7 @@ void Game::handleHitGhost() {
 
 void Game::setGhostsLevel(char level) {
 	//TODO: get num of ghosts from board !!!
-	int numofGhosts = map.numOfGhosts;
+	int numofGhosts = map.getNumOfGhosts();
 	int i;
 	switch (level) {
 	case '1':
@@ -115,9 +122,9 @@ void Game::setGhostsLevel(char level) {
 			ghosts[i] = new GhostBest;
 		break;
 	}
-
-	for (int i = 0; i < map.numOfGhosts; i++) {
-		ghosts[i]->setPos(map.GhostsLocations[i]);
+	const Point* ghostsPos = map.getGhostsPos();
+	for (int i = 0; i < numofGhosts; i++) {
+		ghosts[i]->setPos(ghostsPos[i]);
 		ghosts[i]->setDirection(Direction::NONE);
 	}
 }
@@ -131,7 +138,8 @@ void Game::init() {
 	score = 0;
 	lives = 3;
 
-	map.init();
+	//TODO: get file name from user
+	map.init("pacman_a.txt");
 	initCreatures();
 	hideCursor();
 	setTextColor(Color::WHITE);
@@ -216,7 +224,7 @@ void Game::run() {
 			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
 			increaseScore();
-			if (eatenBreadcrumbs == BREADCRUMBS)
+			if (eatenBreadcrumbs == map.getNumOfBreadCrumbs())
 				isWon = true;
 		}
 		// Check if pacman hit ghost

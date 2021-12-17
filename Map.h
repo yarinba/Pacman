@@ -3,10 +3,8 @@
 
 #include "Point.h"
 #include "Enums.h"
-#include <string>
-#include "Pacman.h"
-#include "Ghost.h"
 #include "Movement.h"
+#include <string>
 #include <fstream>
 
 class Map {
@@ -20,16 +18,16 @@ class Map {
 	Point GhostPos[4];
 	Point mapStartingPoint;
 	Point dataPos;
-  friend class Movement;
+	friend class Movement;
   
 private:
 	void handleLegend(std::fstream& myfile, std::string &line, int& mapCol, int& currChar);
 	void handleChar(char value, int& currCol);
-  Point calculateNextPos(Point pos, Direction dir) const;
+	void getBoard(const char* fileName);
+	Point calculateNextPos(Point pos, Direction dir) const;
 
 public:
 	void init(const char* fileName);
-	void getBoard(const char* fileName);
 	void draw() const;
 	void setIsColored(bool _isColored);
 	void setPoint(const Point& coord, char newVal);
@@ -39,4 +37,9 @@ public:
 		return (row > 0) && (col > 0)
 			&& (row < rowSize) && (col < colSize);
 	}
+	int getNumOfGhosts() const { return numOfGhosts; }
+	int getNumOfBreadCrumbs() const { return numOfBreadCrumbs; }
+	const Point& getPacmanPos() const { return pacmanPos; }
+	const Point& getDataPos() const { return dataPos;  }
+	const Point* getGhostsPos() const { return GhostPos; }
 };
