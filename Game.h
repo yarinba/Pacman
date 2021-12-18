@@ -8,6 +8,7 @@
 #include "GhostGood.h"
 #include "GhostBest.h"
 #include "Pacman.h"
+#include "Fruit.h"
 #include "utils.h"
 #include "Print.h"
 #include <vector>
@@ -31,6 +32,7 @@ class Game {
 	Map map;
 	Pacman pacman;
 	Ghost** ghosts;
+	Fruit fruit;
 	friend class Print;
 private:
 	void setNoColor();
@@ -39,6 +41,8 @@ private:
 	void increaseScore(int num);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
+	void createFruit();
+	void handleHitFruit();
 	void handleHitGhost();
 	void handleGhostsMovement(int numOfIterations);
 	void hitESC(Direction prevPacmanDirection);
@@ -46,8 +50,9 @@ private:
 	void chooseLevel();
 	void setMode();
 	void setGhostsLevel(char level);
+	void manageFruit(int numOfIterations);
 	void getFiles();
-	
+  
 public:
 	void init();
 	void playChosenMode();

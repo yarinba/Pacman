@@ -83,6 +83,7 @@ void Game::initCreatures(bool newGame) {
 	int numofGhosts = map.getNumOfGhosts();
 	pacman.setDirection(Direction::NONE);
 	pacman.setPos(map.getPacmanPos());
+	fruit.setIsAlive(false);
 	//TODO: delete previous allocation if exits
 	if(newGame)
 		ghosts = new Ghost*[numofGhosts];
@@ -126,6 +127,53 @@ void Game::setGhostsLevel(char level) {
 	for (int i = 0; i < numofGhosts; i++) {
 		ghosts[i]->setPos(ghostsPos[i]);
 		ghosts[i]->setDirection(Direction::NONE);
+	}
+}
+
+void Game::createFruit() {
+	Point p;
+	int x = 0, y = 0;
+	bool isValid = false; 
+	do {
+		int x = (rand() % (map.getColSize() - 1)) + 1;
+		int y = (rand() % (map.getRowSize() - 1)) + 1;
+		p = Point(x, y);
+		isValid = map.getPoint(p) == '*' || map.getPoint(p) == ' ';
+	} while (!isValid);
+	fruit.setPos(p);
+	fruit.setIsAlive(true);
+}
+
+void Game::handleHitFruit() {
+	int numofGhosts = map.getNumOfGhosts(), i = 0;
+	bool hitGhost = false, hitPacman = false;
+	// Check Ghost hit Fruit
+	while (!hitGhost && i < numofGhosts) {
+		hitGhost = ghosts[i]->getPos() == fruit.getPos();
+		i++;
+	}
+	if (hitGhost) 
+		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
+
+	// Check Pacman hit Fruit
+	hitPacman = pacman.getPos() == fruit.getPos();
+	if (hitPacman) {
+		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
+		increaseScore(fruit.getFruitVal());
+	}
+}
+
+void Game::manageFruit(int numOfIterations) {
+	bool iteration100 = numOfIterations % 200 == 100;
+	bool alreadyExist = fruit.getIsAlive();
+	if (!alreadyExist && iteration100)
+		createFruit();
+	else if (alreadyExist) {
+		handleHitFruit();
+		fruit.move(map, numOfIterations);
+
+		if(fruit.getNumOfMoves() == 60)
+			fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
 	}
 }
 
@@ -284,6 +332,7 @@ void Game::run() {
 	while (!isLose && !isWon) {
 		// Move the ghosts every 2nd iteration
 		handleGhostsMovement(numOfIterations);
+		manageFruit(numOfIterations);
 
 		if (_kbhit()) {
 			key = _getch();

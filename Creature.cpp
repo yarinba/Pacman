@@ -12,6 +12,10 @@ const Point& Creature::getPos() const {
 	return pos;
 }
 
+char Creature::getSymbol() const {
+	return symbol;
+}
+
 void Creature::setPos(int x, int y) {
 	pos.set(x, y);
 }
@@ -32,6 +36,11 @@ void Creature::setDirection() {
 void Creature::setDirection(Direction _direction) {
 	direction = _direction;
 }
+
+void Creature::setSymbol(char _symbol) {
+	symbol = _symbol;
+}
+
 
 void Creature::setColor(Color _color) {
 	color = _color;
