@@ -5,8 +5,6 @@ void Print::menu() {
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
 		<< "1. Start a new game (with colors)" << std::endl
 		<< "2. Start a new game (without colors)" << std::endl
-		<< "3. Start a new game on a specific screen(with colors)"<<std::endl
-		<< "4. Start a new game on a specific screen(without colors)" << std::endl
 		<< "8. Present instructions and keys" << std::endl
 		<< "9. EXIT" << std::endl;
 }
@@ -78,7 +76,8 @@ void Print::noFiles() {
 }
 
 void Print::score(const Game& game) {
-	gotoxy(0, 23);
+	Point information(game.map.getDataPos());
+	gotoxy(information.getX(), information.getY());
 	setTextColor(Color::WHITE);
 	std::cout << "SCORE: ";
 

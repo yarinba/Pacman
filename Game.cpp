@@ -7,6 +7,7 @@ void Game::setNoColor() {
 	isColored = false;
 	map.setIsColored(false);
 	pacman.setColor(Color::WHITE);
+	fruit.setColor(Color::WHITE);
 	for(int i=0; i< numofGhosts; i++)
 		ghosts[i]->setColor(Color::WHITE);
 }
@@ -16,6 +17,7 @@ void Game::setColor() {
 	isColored = true;
 	map.setIsColored(true);
 	pacman.setColor(Color::YELLOW);
+	fruit.setColor(Color::LIGHTCYAN);
 	for (int i = 0; i < numofGhosts; i++)
 		ghosts[i]->setColor(Color::LIGHTMAGENTA);
 }
@@ -96,7 +98,6 @@ void Game::initCreatures(bool newGame) {
 	}
 }
 
-
 // Reducing lives by 1 
 // Initiallize pacman and ghosts positions
 void Game::handleHitGhost() {
@@ -127,6 +128,7 @@ void Game::setGhostsLevel(char level) {
 	for (int i = 0; i < numofGhosts; i++) {
 		ghosts[i]->setPos(ghostsPos[i]);
 		ghosts[i]->setDirection(Direction::NONE);
+		ghosts[i]->setColor(isColored ? Color::LIGHTMAGENTA : Color::WHITE);
 	}
 }
 
@@ -177,150 +179,21 @@ void Game::manageFruit(int numOfIterations) {
 	}
 }
 
-/* Public Functions */
-
-void Game::init() {
-	isWon = false;
-	isLose = false;
-	eatenBreadcrumbs = 0;
-	score = 0;
-	lives = 3;
-	hideCursor();
-	setTextColor(Color::WHITE);
-	srand(time(NULL));
-}
-
-/*
-* Displays the menu
-* Return: true if the game should start, otherwise false
-*/
-bool Game::menu() {
-	Print::menu();
-	char key = _getch();
-	chooseLevel();
-	setMode();
-	switch (key)
-	{
-	case '1':
-		setColor();
-		return true;
-		break;
-	case '2':
-		setNoColor();
-		return true;
-		break;
-	case '3':
-		setColor();
-		return true;
-		break;
-	case '4':
-		setNoColor();
-		return true;
-		break;
-	case '8':
-		Print::instructions();
-		return false;
-		break;
-	case '9':
-		exit(0);
-		break;
-	default:
-		return false;
-		break;
-	}
-	
-}
-
-void Game::chooseLevel() {
-	char key;
-	do {
-		Print::chooseLevel();
-		key = _getch();
-	} while (key != '1' && key != '2' && key != '3');
-	ghostLevel = key;
-}
-
-//seperate to 2 functions
-void Game::setMode() {
-	getFiles();
-	int key;
-	if (fileNames.size() == 0)
-		std::cout << ">>No files found<<" << std::endl;
-	else {
-		do {
-			Print::chooseMode();
-			key = _getch();
-		} while (key != '1' && key != '2');
-	}
-	if (key == '2')
-		mode = 1;
-}
-
-	
-
-void Game::playChosenMode() {
-	string screen;
-	bool found = false;
-	int filesSize = fileNames.size();
-	int i = 0;
-	if (mode == 1)
-	{
-		
-		do {
-			clear_screen();
-			std::cout << "Enter the screen name" << std::endl;
-			std::cin >> screen;
-			while (i < filesSize) {
-				if (screen == fileNames[i]) {
-					found = true;
-					break;
-				}
-				i++;
-			}
-			i = 0;
-		} while (!found);
-		init();
-		map.init(screen);
-		initCreatures();
-		setGhostsLevel(ghostLevel);
-		run();
-	}
-	else
-	{
-		init();
-		while ((currFile < filesSize) && (!isLose))
-		{
-			eatenBreadcrumbs = 0;
-			isWon = false;
-			map.init(fileNames[currFile]);
-			initCreatures();
-			setGhostsLevel(ghostLevel);
-			run();
-		}
-	}
-}
-
 void Game::getFiles() {
-	string str1;
-
+	fileNames.clear();
 	string path = "./";
-	for (const auto& entry : std::filesystem::directory_iterator(path))
-	{
-		std::filesystem::path str = entry.path();
-		if (str.extension() == ".txt")
-		{
-			str1 = str.string();
-		    fileNames.push_back(str1);
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		string str = entry.path().string();
+		if (str.find(".screen.txt") != string::npos) {
+			string str1 = str;
+			fileNames.push_back(str1);
 		}
-
 	}
 }
-
-
 
 void Game::run() {
-	int numOfIterations = 0;
 	char key = ' ';
+	int numOfIterations = 0;
 	Direction dir;
 
 	clear_screen();
@@ -390,4 +263,118 @@ void Game::run() {
 		}
 	}
 }
+
+void Game::chooseLevel() {
+	char key;
+	do {
+		Print::chooseLevel();
+		key = _getch();
+	} while (key != '1' && key != '2' && key != '3');
+	ghostLevel = key;
+}
+
+//seperate to 2 functions
+void Game::setMode() {
+	getFiles();
+	char key;
+	if (fileNames.size() == 0)
+		std::cout << ">>> No files found <<<" << std::endl;
+	else {
+		do {
+			Print::chooseMode();
+			key = _getch();
+		} while (key != '1' && key != '2');
+	}
+	if (key == '2')
+		mode = 1;
+}
+
+void Game::init() {
+	isWon = false;
+	isLose = false;
+	eatenBreadcrumbs = 0;
+	score = 0;
+	lives = 3;
+	hideCursor();
+	setTextColor(Color::WHITE);
+	srand(time(NULL));
+}
+
+/* Public Functions */
+
+/*
+* Displays the menu
+* Return: true if the game should start, otherwise false
+*/
+bool Game::menu() {
+	Print::menu();
+	char key = _getch();
+	switch (key)
+	{
+	case '1':
+		chooseLevel();
+		setMode();
+		setColor();
+		return true;
+		break;
+	case '2':
+		chooseLevel();
+		setMode();
+		setNoColor();
+		return true;
+		break;
+	case '8':
+		Print::instructions();
+		return false;
+		break;
+	case '9':
+		exit(0);
+		break;
+	default:
+		return false;
+		break;
+	}
+	
+}
+
+void Game::playChosenMode() {
+	string screen;
+	bool found = false;
+	int filesSize = fileNames.size();
+	int i = 0; 
+	if (mode == 1) {
+		do {
+			clear_screen();
+			std::cout << "Enter the screen name" << std::endl;
+			std::cin >> screen;
+			while (i < filesSize) {
+				if ("./" + screen == fileNames[i]) {
+					found = true;
+					break;
+				}
+				i++;
+			}
+			i = 0;
+		} while (!found);
+		init();
+		map.init(screen);
+		initCreatures();
+		setGhostsLevel(ghostLevel);
+		run();
+	}
+	else {
+		init();
+		
+		while ((currFile < filesSize) && (!isLose)) {
+			eatenBreadcrumbs = 0;
+			isWon = false;
+			map.init(fileNames[currFile]);
+
+			initCreatures();
+			setGhostsLevel(ghostLevel);
+			run();
+		}
+	}
+}
+
 

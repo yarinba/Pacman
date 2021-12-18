@@ -41,21 +41,21 @@ private:
 	void increaseScore(int num);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
+	void manageFruit(int numOfIterations);
 	void createFruit();
 	void handleHitFruit();
 	void handleHitGhost();
 	void handleGhostsMovement(int numOfIterations);
+	void setGhostsLevel(char level);
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);
 	void chooseLevel();
 	void setMode();
-	void setGhostsLevel(char level);
-	void manageFruit(int numOfIterations);
 	void getFiles();
+	void init();
+	void run();
   
 public:
-	void init();
 	void playChosenMode();
 	bool menu();
-	void run();
 };

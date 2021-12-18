@@ -17,18 +17,16 @@ void Map:: getBoard(string fileName)
 	rowSize = 0;
 	int i = 0,currMapCol=0,searchData=0,len;
 	getline(myfile, line);
-	if ((line[i] == '&') && (size(line) <= 2)){
+	if ((line[i] == '&') && (size(line) <= 2)) {
 		mapStartingPoint.set(0, 3);
 		getline(myfile, line);
 	}
 
 	colSize = size(line);
 
-	//TODO: change to !eof
 	while (!myfile.eof()) { 
-		while (currMapCol < colSize){
-			if (line[i] == '&')
-			{
+		while (currMapCol < colSize) {
+			if (line[i] == '&') {
 				dataPos.set(i, rowSize);
 				handleLegend(myfile, line, currMapCol, i);
 			}
@@ -41,8 +39,7 @@ void Map:: getBoard(string fileName)
 		currMapCol = 0;
 		searchData = i;
 		len = size(line);
-		while (i < len)
-		{
+		while (i < len) {
 			if(line[i]=='&')
 				handleLegend(myfile, line, currMapCol, i);
 			i++;
