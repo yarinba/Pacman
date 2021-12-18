@@ -29,5 +29,5 @@ enum class Direction {
 	STAY
 };
 
-enum MAP_BOUNDARIES { X = 61, Y = 22 };
+enum MAP_BOUNDARIES { X = 80, Y = 25 };
 

@@ -3,10 +3,13 @@
 #include "utils.h"
 #include "Game.h"
 
+
 class Game;
 
 class Print {
 public:
+	static void chooseGame();
+	static void chooseMode();
 	static void menu();
 	static void instructions();
 	static void lose();

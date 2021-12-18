@@ -1,18 +1,20 @@
 #include "Map.h"
 
 
-
-void Map::init(const char* fileName) {
+void Map::init(string fileName) {
+	numOfBreadCrumbs = 0;
+	numOfGhosts = 0;
 	for (int i = 0; i < MAP_BOUNDARIES::Y; i++)
-		strcpy(map[i], "                                                             ");
+		strcpy(map[i], "                                                                                ");
 
 	getBoard(fileName);
 }
 
-void Map:: getBoard(const char* fileName)
+void Map:: getBoard(string fileName)
 {
 	std::fstream myfile(fileName);
 	std::string line;
+	rowSize = 0;
 	int i = 0,currMapCol=0,searchData=0,len;
 	getline(myfile, line);
 	if ((line[i] == '&') && (size(line) <= 2)){
@@ -23,7 +25,7 @@ void Map:: getBoard(const char* fileName)
 	colSize = size(line);
 
 	//TODO: change to !eof
-	while (rowSize < MAP_BOUNDARIES::Y) { 
+	while (!myfile.eof()) { 
 		while (currMapCol < colSize){
 			if (line[i] == '&')
 			{
@@ -100,7 +102,6 @@ void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &c
 				else
 					handleChar(line[mapCol], mapCol);
 			}
-			rowSize++;
 			mapCol = 0;
 			getline(myfile, line);
 		}

@@ -5,9 +5,12 @@ void Print::menu() {
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> WELCOME TO PACAMAN <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
 		<< "1. Start a new game (with colors)" << std::endl
 		<< "2. Start a new game (without colors)" << std::endl
+		<< "3. Start a new game on a specific screen(with colors)"<<std::endl
+		<< "4. Start a new game on a specific screen(without colors)" << std::endl
 		<< "8. Present instructions and keys" << std::endl
 		<< "9. EXIT" << std::endl;
 }
+
 
 void Print::instructions() {
 	clear_screen();
@@ -50,6 +53,14 @@ void Print::clearPause() {
 	std::cout << "                     ";
 	gotoxy(40, 24);
 	std::cout << "                     ";
+}
+
+void Print::chooseMode() {
+	clear_screen();
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Mode Game <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+		<< "Please choose the mode of the game:" << std::endl
+		<< "1. Play on all screens" << std::endl
+		<< "2. Play on a specific screen" << std::endl;
 }
 
 void Print::chooseLevel() {

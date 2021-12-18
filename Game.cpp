@@ -137,10 +137,6 @@ void Game::init() {
 	eatenBreadcrumbs = 0;
 	score = 0;
 	lives = 3;
-
-	//TODO: get file name from user
-	map.init("pacman_a.txt");
-	initCreatures();
 	hideCursor();
 	setTextColor(Color::WHITE);
 	srand(time(NULL));
@@ -154,6 +150,7 @@ bool Game::menu() {
 	Print::menu();
 	char key = _getch();
 	chooseLevel();
+	setMode();
 	switch (key)
 	{
 	case '1':
@@ -161,6 +158,14 @@ bool Game::menu() {
 		return true;
 		break;
 	case '2':
+		setNoColor();
+		return true;
+		break;
+	case '3':
+		setColor();
+		return true;
+		break;
+	case '4':
 		setNoColor();
 		return true;
 		break;
@@ -175,6 +180,7 @@ bool Game::menu() {
 		return false;
 		break;
 	}
+	
 }
 
 void Game::chooseLevel() {
@@ -183,8 +189,86 @@ void Game::chooseLevel() {
 		Print::chooseLevel();
 		key = _getch();
 	} while (key != '1' && key != '2' && key != '3');
-	setGhostsLevel(key);
+	ghostLevel = key;
 }
+
+//seperate to 2 functions
+void Game::setMode() {
+	getFiles();
+	int key;
+	if (fileNames.size() == 0)
+		std::cout << ">>No files found<<" << std::endl;
+	else {
+		do {
+			Print::chooseMode();
+			key = _getch();
+		} while (key != '1' && key != '2');
+	}
+	if (key == '2')
+		mode = 1;
+}
+
+	
+
+void Game::playChosenMode() {
+	string screen;
+	bool found = false;
+	int filesSize = fileNames.size();
+	int i = 0;
+	if (mode == 1)
+	{
+		
+		do {
+			clear_screen();
+			std::cout << "Enter the screen name" << std::endl;
+			std::cin >> screen;
+			while (i < filesSize) {
+				if (screen == fileNames[i]) {
+					found = true;
+					break;
+				}
+				i++;
+			}
+			i = 0;
+		} while (!found);
+		init();
+		map.init(screen);
+		initCreatures();
+		setGhostsLevel(ghostLevel);
+		run();
+	}
+	else
+	{
+		init();
+		while ((currFile < filesSize) && (!isLose))
+		{
+			eatenBreadcrumbs = 0;
+			isWon = false;
+			map.init(fileNames[currFile]);
+			initCreatures();
+			setGhostsLevel(ghostLevel);
+			run();
+		}
+	}
+}
+
+void Game::getFiles() {
+	string str1;
+
+	string path = "./";
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+	{
+		std::filesystem::path str = entry.path();
+		if (str.extension() == ".txt")
+		{
+			str1 = str.string();
+		    fileNames.push_back(str1);
+		}
+
+	}
+}
+
+
 
 void Game::run() {
 	int numOfIterations = 0;
@@ -239,13 +323,22 @@ void Game::run() {
 		}
 
 		numOfIterations++;
-		Sleep(150);
+		Sleep(75);
 	}
 
 	if (isLose)
 		Print::lose();
-	else if (isWon)
+	else if ((isWon) && (mode == 1)) {
 		Print::won();
-	key = _getch();
+		key = _getch();
+	}
+	else if ((isWon) && (mode == 0))
+	{
+		currFile++;
+		if (currFile >= fileNames.size()) {
+			Print::won();
+			key = _getch();
+		}
+	}
 }
 

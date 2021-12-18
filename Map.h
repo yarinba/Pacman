@@ -6,6 +6,7 @@
 #include "Movement.h"
 #include <string>
 #include <fstream>
+using std::string;
 
 class Map {
 	bool isColored = true;
@@ -23,11 +24,11 @@ class Map {
 private:
 	void handleLegend(std::fstream& myfile, std::string &line, int& mapCol, int& currChar);
 	void handleChar(char value, int& currCol);
-	void getBoard(const char* fileName);
+	void getBoard(string fileName);
 	Point calculateNextPos(Point pos, Direction dir) const;
 
 public:
-	void init(const char* fileName);
+	void init(string fileName);
 	void draw() const;
 	void setIsColored(bool _isColored);
 	void setPoint(const Point& coord, char newVal);
