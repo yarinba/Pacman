@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "Map.h"
+#include "Creature.h"
 #include "Enums.h"
 #include<queue>
 #include<string>
@@ -25,4 +26,5 @@ private:
     static string pathMoves(const Map& map, const Point& src, const Point& dest);
 public:
     static Direction calculateNextMoveBFS(const Map& map, const Point& src, const Point& dest);
+    static bool noviceMove(Creature& entity, const Map& map, int iterationNumber);
 };

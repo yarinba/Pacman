@@ -128,3 +128,28 @@ Direction Movement::calculateNextMoveBFS(const Map& map, const Point& src, const
         return Direction::NONE;
     }
 }
+
+/*
+* (*) Will change direction of entity if one of the following occurs:
+*		1. Every 20 iterations
+*		2. if the entity hit a wall / invisible tunnel
+*		3. currrent direction is NONE
+*/
+bool Movement::noviceMove(Creature& entity, const Map& map, int iterationNumber) {
+    bool everyTwentyIterations = !(iterationNumber % 20);
+    bool noDirection = entity.getDirection() == Direction::NONE ? true : false;
+
+    if (everyTwentyIterations || noDirection)
+        entity.setDirection();
+
+    bool isWall = map.isWall(entity.getPos(), entity.getDirection(), false);
+    bool isInBoundaries = map.isInBoundaries(entity.getPos().getY(), entity.getPos().getY());
+    while (isWall || !isInBoundaries) {
+        entity.setDirection();
+        isWall = map.isWall(entity.getPos(), entity.getDirection(), false);
+        isInBoundaries = map.isInBoundaries(entity.getPos().getY(), entity.getPos().getY());
+    }
+
+    bool isBreadcrumbPos = (map.getPoint(entity.getPos()) == '*');
+    return isBreadcrumbPos;
+}

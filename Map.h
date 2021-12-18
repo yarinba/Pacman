@@ -33,6 +33,8 @@ public:
 	void setPoint(const Point& coord, char newVal);
 	char getPoint(const Point& coord) const;
 	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
+	int getColSize() const { return colSize; }
+	int getRowSize() const { return rowSize; }
 	bool isInBoundaries(int row, int col) const {
 		return (row > 0) && (col > 0)
 			&& (row < rowSize) && (col < colSize);
