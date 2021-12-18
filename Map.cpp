@@ -16,33 +16,45 @@ void Map:: getBoard(string fileName)
 	std::string line;
 	rowSize = 0;
 	int i = 0,currMapCol=0,searchData=0,len;
-	getline(myfile, line);
-	if ((line[i] == '&') && (size(line) <= 2)) {
-		mapStartingPoint.set(0, 3);
-		getline(myfile, line);
-	}
 
-	colSize = size(line);
+
+	getline(myfile, line);
 
 	while (!myfile.eof()) { 
-		while (currMapCol < colSize) {
-			if (line[i] == '&') {
-				dataPos.set(i, rowSize);
-				handleLegend(myfile, line, currMapCol, i);
-			}
-			else
-				handleChar(line[i], currMapCol);
-
-			i++;
+		
+		if ((line[i] == '&') && (size(line) <= 2)) //if the & is at the end of the screen
+		{
+			dataPos.set(i, rowSize);
+			handleLegend(myfile, line, currMapCol, i);
 		}
-		rowSize++;
-		currMapCol = 0;
-		searchData = i;
-		len = size(line);
-		while (i < len) {
-			if(line[i]=='&')
-				handleLegend(myfile, line, currMapCol, i);
-			i++;
+		else
+		{
+			if (rowSize == 0)
+				colSize = size(line);
+			while (currMapCol < colSize) {
+				if (line[i] == '&') {
+					dataPos.set(i, rowSize);
+					handleLegend(myfile, line, currMapCol, i);
+				}
+				else if (map[rowSize][currMapCol] != '!')
+					handleChar(line[i], currMapCol);
+				else
+					currMapCol++;
+				i++;
+			}
+
+			rowSize++;
+			currMapCol = 0;
+			searchData = i;
+			len = size(line);
+			while (i < len) {
+				if (line[i] == '&')
+				{
+					handleLegend(myfile, line, currMapCol, i);
+					dataPos.set(i, rowSize);
+				}
+				i++;
+			}
 		}
 		i = 0;
 		getline(myfile, line);
@@ -85,6 +97,8 @@ void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &c
 	int xStart=currChar;
 	if ((currChar == 0) && (size(line) > 2))//the map is on the right side of the legend
 		mapStartingPoint.set(20, 0);
+	else if ((rowSize == 0) && (size(line) < 2))
+		mapStartingPoint.set(0, 3);
 	else if ((currChar > 0) && (currChar < colSize))//if the legend is in the map
 	{
 		for (int i = 0; i < 3; i++) {
@@ -92,17 +106,9 @@ void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &c
 			{
 				map[rowSize + i][xStart + j] = '!';
 			}
-			while (mapCol < colSize)
-			{
-				if (mapCol == xStart)
-					mapCol += 20;
-				else
-					handleChar(line[mapCol], mapCol);
-			}
-			mapCol = 0;
-			getline(myfile, line);
+
 		}
-		currChar = 0;
+		mapCol++;
 	}
 	else 
 		mapStartingPoint.set(0,0);
