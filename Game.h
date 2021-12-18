@@ -11,6 +11,11 @@
 #include "Fruit.h"
 #include "utils.h"
 #include "Print.h"
+#include <vector>
+#include <string>
+#include <filesystem>
+using std::vector;
+using std::string;
 
 class Game {
 	enum { ESC = 27, BREADCRUMBS = 430 };
@@ -20,6 +25,10 @@ class Game {
 	int eatenBreadcrumbs = 0;
 	int score = 0;
 	int lives = 3;
+	int currFile = 0;
+	int mode = 0;
+	char ghostLevel = '0';
+	vector <string> fileNames;
 	Map map;
 	Pacman pacman;
 	Ghost** ghosts;
@@ -39,10 +48,14 @@ private:
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);
 	void chooseLevel();
+	void setMode();
 	void setGhostsLevel(char level);
 	void manageFruit(int numOfIterations);
+	void getFiles();
+  
 public:
 	void init();
+	void playChosenMode();
 	bool menu();
 	void run();
 };
