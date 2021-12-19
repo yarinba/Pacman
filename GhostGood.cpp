@@ -1,8 +1,5 @@
 #include "GhostGood.h"
 
-/*
-* TODO: write documentation
-*/
 void GhostGood::move(const Map& map, const Point& pacmanPos, int iterationNumber) {
 	if (!(iterationNumber % 40)) {
 		setDirection();

@@ -1,5 +1,11 @@
 #include "Movement.h"
 
+/*
+* Given a Map with binary matrix mat[][] of dimensions of rowSize * colSize 
+* and Points src and dest representing source and destination cells respectively, 
+* the function will return the shortest sequence of moves (string)
+* from the given source cell to the destination cell via valid cells only
+*/
 string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) {
     // Stores the moves of the directions of adjacent cells
     const int dRow[4] = { -1, 0, 0, 1 };

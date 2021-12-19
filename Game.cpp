@@ -86,7 +86,6 @@ void Game::initCreatures(bool newGame) {
 	pacman.setDirection(Direction::NONE);
 	pacman.setPos(map.getPacmanPos());
 	fruit.setIsAlive(false);
-	//TODO: delete previous allocation if exits
 	if(newGame)
 		ghosts = new Ghost*[numofGhosts];
 	else {
@@ -109,7 +108,6 @@ void Game::handleHitGhost() {
 }
 
 void Game::setGhostsLevel(char level) {
-	//TODO: get num of ghosts from board !!!
 	int numofGhosts = map.getNumOfGhosts();
 	int i;
 	switch (level) {

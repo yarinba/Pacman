@@ -8,7 +8,6 @@ int main() {
 	bool isStartPressed = false;
 	Game game;
 	
-	// TODO: everytime game is finished - delete allocations of ghosts
 	while (true) {
 		do {
 			isStartPressed = game.menu();
