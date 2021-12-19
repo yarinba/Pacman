@@ -22,29 +22,32 @@ void Point::set(int _x, int _y) {
 }
 
 // Get: direction - change Point position Respectively
-void Point::move(Direction dir) {
+void Point::move(Direction dir, int rowSize, int colSize) {
+	bool isPacman = false;
+	if (rowSize != 0 && colSize != 0)
+		isPacman = true;
 	switch (dir) {
 	case Direction::UP:
 		--y;
-		if (y < 0) {
-			y = MAP_BOUNDARIES::Y - 1;
+		if (isPacman && y < 0) {
+			y = rowSize - 1;
 		}
 		break;
 	case Direction::DOWN:
 		++y;
-		if (y > MAP_BOUNDARIES::Y - 1) {
+		if (isPacman && y > rowSize - 1) {
 			y = 0;
 		}
 		break;
 	case Direction::LEFT:
 		--x;
-		if (x < 0) {
-			x = MAP_BOUNDARIES::X - 1;
+		if (isPacman && x < 0) {
+			x = colSize - 1;
 		}
 		break;
 	case Direction::RIGHT:
 		++x;
-		if (x > MAP_BOUNDARIES::X - 1) {
+		if (isPacman && x > colSize - 1) {
 			x = 0;
 		}
 		break;

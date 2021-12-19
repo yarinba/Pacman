@@ -21,8 +21,8 @@ Direction Pacman::getDirection(char key) const {
 *	2. change logical position
 *	3. print the Pacman symbol at new logical position
 */
-void Pacman::move() {
+void Pacman::move(int rowSize, int colSize) {
 	pos.draw(' ');
-	pos.move(direction);
+	pos.move(direction, rowSize, colSize);
 	pos.draw(symbol, color);
 }

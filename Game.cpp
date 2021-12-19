@@ -68,7 +68,7 @@ void Game::handleGhostsMovement(int numOfIterations) {
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
 	int numofGhosts = map.getNumOfGhosts();
-	Print::pause();
+	Print::pause(*this);
 	pacman.setDirection(Direction::NONE);
 	for (int i = 0; i < numofGhosts; i++)
 		ghosts[i]->setDirection(Direction::NONE);
@@ -76,7 +76,7 @@ void Game::hitESC(Direction prevPacmanDirection) {
 		key = _getch();
 	} while (key != ESC);
 
-	Print::clearPause();
+	Print::clearPause(*this);
 	pacman.setDirection(prevPacmanDirection);
 }
 
@@ -104,6 +104,8 @@ void Game::handleHitGhost() {
 	lives--;
 	initCreatures(false);
 	map.draw();
+	Print::score(*this);
+	Print::lives(*this);
 }
 
 void Game::setGhostsLevel(char level) {
@@ -184,11 +186,48 @@ void Game::getFiles() {
 	string path = "./";
 	for (const auto& entry : std::filesystem::directory_iterator(path)) {
 		string str = entry.path().string();
-		if (str.find(".screen.txt") != string::npos) {
+		if (str.find(".screen") != string::npos) {
 			string str1 = str;
 			fileNames.push_back(str1);
 		}
 	}
+}
+
+void Game::chooseLevel() {
+	char key;
+	do {
+		Print::chooseLevel();
+		key = _getch();
+	} while (key != '1' && key != '2' && key != '3');
+	ghostLevel = key;
+}
+
+void Game::setMode() {
+	getFiles();
+	char key;
+	if (fileNames.size() == 0)
+		std::cout << ">>> No files found <<<" << std::endl;
+	else {
+		do {
+			Print::chooseMode();
+			key = _getch();
+		} while (key != '1' && key != '2');
+	}
+	if (key == '1')
+		mode = Mode::ALL_FILES;
+	else
+		mode = Mode::ONE_FILE;
+}
+
+void Game::init() {
+	isWon = false;
+	isLose = false;
+	eatenBreadcrumbs = 0;
+	score = 0;
+	lives = 3;
+	hideCursor();
+	setTextColor(Color::WHITE);
+	srand(time(NULL));
 }
 
 void Game::run() {
@@ -222,7 +261,7 @@ void Game::run() {
 			pacman.setDirection(Direction::STAY);
 		}
 		else {
-			pacman.move();
+			pacman.move(map.getRowSize(), map.getColSize());
 		}
 
 		// Check if pacman ate breadcrumb
@@ -248,13 +287,17 @@ void Game::run() {
 		Sleep(75);
 	}
 
+	// free allocations;
+	for (int i = 0; i < map.getNumOfGhosts(); i++)
+		delete ghosts[i];
+
 	if (isLose)
 		Print::lose();
-	else if ((isWon) && (mode == 1)) {
+	else if ((isWon) && (mode == Mode::ONE_FILE)) {
 		Print::won();
 		key = _getch();
 	}
-	else if ((isWon) && (mode == 0))
+	else if ((isWon) && (mode == Mode::ALL_FILES))
 	{
 		currFile++;
 		if (currFile >= fileNames.size()) {
@@ -262,42 +305,6 @@ void Game::run() {
 			key = _getch();
 		}
 	}
-}
-
-void Game::chooseLevel() {
-	char key;
-	do {
-		Print::chooseLevel();
-		key = _getch();
-	} while (key != '1' && key != '2' && key != '3');
-	ghostLevel = key;
-}
-
-//seperate to 2 functions
-void Game::setMode() {
-	getFiles();
-	char key;
-	if (fileNames.size() == 0)
-		std::cout << ">>> No files found <<<" << std::endl;
-	else {
-		do {
-			Print::chooseMode();
-			key = _getch();
-		} while (key != '1' && key != '2');
-	}
-	if (key == '2')
-		mode = 1;
-}
-
-void Game::init() {
-	isWon = false;
-	isLose = false;
-	eatenBreadcrumbs = 0;
-	score = 0;
-	lives = 3;
-	hideCursor();
-	setTextColor(Color::WHITE);
-	srand(time(NULL));
 }
 
 /* Public Functions */
@@ -312,14 +319,14 @@ bool Game::menu() {
 	switch (key)
 	{
 	case '1':
-		chooseLevel();
 		setMode();
+		chooseLevel();
 		setColor();
 		return true;
 		break;
 	case '2':
-		chooseLevel();
 		setMode();
+		chooseLevel();
 		setNoColor();
 		return true;
 		break;
@@ -342,10 +349,10 @@ void Game::playChosenMode() {
 	bool found = false;
 	int filesSize = fileNames.size();
 	int i = 0; 
-	if (mode == 1) {
+	if (mode == Mode::ONE_FILE) {
 		do {
 			clear_screen();
-			std::cout << "Enter the screen name" << std::endl;
+			std::cout << "Enter the screen file name" << std::endl;
 			std::cin >> screen;
 			while (i < filesSize) {
 				if ("./" + screen == fileNames[i]) {

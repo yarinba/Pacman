@@ -4,7 +4,7 @@
 void Map::init(string fileName) {
 	numOfBreadCrumbs = 0;
 	numOfGhosts = 0;
-	for (int i = 0; i < MAP_BOUNDARIES::Y; i++)
+	for (int i = 0; i < MapBoundaries::Y; i++)
 		strcpy(map[i], "                                                                                ");
 
 	getBoard(fileName);
@@ -208,7 +208,7 @@ bool Map::isWall(Point pos, Direction dir, bool isPacman) const {
 	if (!isPacman) {
 		int x = nextPos.getX();
 		int y = nextPos.getY();
-		if (y == 0 || y == MAP_BOUNDARIES::Y - 1 || x == 0 || x == MAP_BOUNDARIES::X - 1)
+		if (y == 0 || y == rowSize - 1 || x == 0 || x == colSize - 1)
 			return true;
 	}
 	if (getPoint(nextPos) == '#')

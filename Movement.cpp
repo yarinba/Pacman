@@ -4,16 +4,18 @@ string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) 
     // Stores the moves of the directions of adjacent cells
     const int dRow[4] = { -1, 0, 0, 1 };
     const int dCol[4] = { 0, -1, 1, 0 };
+    const int rowSize = map.getRowSize();
+    const int colSize = map.getColSize();
 
     // Stores the distance for each cell from the source cell
-    int d[MAP_BOUNDARIES::Y][MAP_BOUNDARIES::X];
+    int d[MapBoundaries::Y][MapBoundaries::X];
     memset(d, -1, sizeof d);
 
     // Distance of source cell is 0
     d[src.getY()][src.getX()] = 0;
 
     // Initialize a visited array
-    bool visited[MAP_BOUNDARIES::Y][MAP_BOUNDARIES::X];
+    bool visited[MapBoundaries::Y][MapBoundaries::X];
     memset(visited, false, sizeof visited);
 
     // Mark source cell as visited
@@ -57,7 +59,7 @@ string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) 
                 }
 
                 // Append U
-                if (yy < map.rowSize - 1 && d[yy + 1][xx] == dist - 1) {
+                if (yy < rowSize - 1 && d[yy + 1][xx] == dist - 1) {
                     pathmoves += 'U';
                     yy++;
                 }
@@ -69,7 +71,7 @@ string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) 
                 }
 
                 // Append L
-                if (xx < map.colSize - 1 && d[yy][xx + 1] == dist - 1) {
+                if (xx < colSize - 1 && d[yy][xx + 1] == dist - 1) {
                     pathmoves += 'L';
                     xx++;
                 }
@@ -92,7 +94,7 @@ string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) 
 
             // If the current cell is valid cell and can be traversed
             if (map.isInBoundaries(row, col) &&
-                (map.map[row][col] != '#') && 
+                (map.getPoint(Point(col, row)) != '#') && 
                 !visited[row][col]) {
 
                 // Mark the adjacent cells as visited

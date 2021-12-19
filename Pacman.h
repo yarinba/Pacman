@@ -9,5 +9,5 @@ public:
 	Pacman();
 	using Creature::getDirection;
 	Direction getDirection(char key) const;
-	void move();
+	void move(int rowSize, int colSize);
 };

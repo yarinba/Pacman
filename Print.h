@@ -8,14 +8,13 @@ class Game;
 
 class Print {
 public:
-	static void chooseGame();
 	static void chooseMode();
 	static void menu();
 	static void instructions();
 	static void lose();
 	static void won();
-	static void pause();
-	static void clearPause();
+	static void pause(const Game& game);
+	static void clearPause(const Game& game);
 	static void chooseLevel();
 	static void noFiles();
 	static void score(const Game& game);

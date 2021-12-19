@@ -18,7 +18,7 @@ using std::vector;
 using std::string;
 
 class Game {
-	enum { ESC = 27, BREADCRUMBS = 430 };
+	enum { ESC = 27 };
 	bool isColored = true;
 	bool isWon = false;
 	bool isLose = false;
@@ -26,7 +26,7 @@ class Game {
 	int score = 0;
 	int lives = 3;
 	int currFile = 0;
-	int mode = 0;
+	Mode mode;
 	char ghostLevel = '0';
 	vector <string> fileNames;
 	Map map;
@@ -58,4 +58,5 @@ private:
 public:
 	void playChosenMode();
 	bool menu();
+	~Game() { delete[] ghosts; }
 };

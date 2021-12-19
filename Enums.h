@@ -29,5 +29,10 @@ enum class Direction {
 	STAY
 };
 
-enum MAP_BOUNDARIES { X = 80, Y = 25 };
+enum MapBoundaries { X = 80, Y = 25 };
+
+enum class Mode {
+	ALL_FILES,
+	ONE_FILE
+};
 

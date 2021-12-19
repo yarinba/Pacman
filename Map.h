@@ -10,7 +10,7 @@ using std::string;
 
 class Map {
 	bool isColored = true;
-	char map[MAP_BOUNDARIES::Y][MAP_BOUNDARIES::X + 1];
+	char map[MapBoundaries::Y][MapBoundaries::X + 1];
 	int rowSize = 0;
 	int colSize = 0;
 	int numOfGhosts=0;
@@ -19,7 +19,6 @@ class Map {
 	Point GhostPos[4];
 	Point mapStartingPoint;
 	Point dataPos;
-	friend class Movement;
   
 private:
 	void handleLegend(std::fstream& myfile, std::string &line, int& mapCol, int& currChar);
