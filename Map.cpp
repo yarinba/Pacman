@@ -10,6 +10,7 @@ void Map::init(string fileName) {
 	getBoard(fileName);
 }
 
+/*Reading a map from the requested file*/
 void Map:: getBoard(string fileName)
 {
 	std::fstream myfile(fileName);
@@ -17,20 +18,18 @@ void Map:: getBoard(string fileName)
 	rowSize = 0;
 	int i = 0,currMapCol=0,searchData=0,len;
 
-
 	getline(myfile, line);
-
+	colSize=line.size();
 	while (!myfile.eof()) { 
 		
-		if ((line[i] == '&') && (size(line) <= 2)) //if the & is at the end of the screen
+		if ((line[i] == '&') && (size(line) <= 2))  /*if the & is at the end of the file*/
 		{
 			dataPos.set(i, rowSize);
 			handleLegend(myfile, line, currMapCol, i);
 		}
 		else
 		{
-			if (rowSize == 0)
-				colSize = size(line);
+		
 			while (currMapCol < colSize) {
 				if (line[i] == '&') {
 					dataPos.set(i, rowSize);
@@ -47,7 +46,7 @@ void Map:: getBoard(string fileName)
 			currMapCol = 0;
 			searchData = i;
 			len = size(line);
-			while (i < len) {
+			while (i < len) /*if the & is on the right side of the map*/ {
 				if (line[i] == '&')
 				{
 					handleLegend(myfile, line, currMapCol, i);
@@ -63,7 +62,8 @@ void Map:: getBoard(string fileName)
 	myfile.close();
 }
 
-void Map::handleChar(char value, int& currCol)
+/*inserting values to the map array and set the positions of pacman and the ghosts according to the signs in the file*/
+void Map::handleChar(char value, int& currCol )
 {
 	switch (value)
 	{
@@ -83,8 +83,8 @@ void Map::handleChar(char value, int& currCol)
 		numOfGhosts++;
 		break;
 	case '@':
-		pacmanPos.set(currCol, rowSize);
 		map[rowSize][currCol] = '@';
+		pacmanPos.set(currCol ,rowSize);
 		break;
 	default:
 		break;
@@ -92,14 +92,11 @@ void Map::handleChar(char value, int& currCol)
 	currCol++;
 }
 
+/*handles the & sign in the map*/
 void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &currChar)
 {
 	int xStart=currChar;
-	if ((currChar == 0) && (size(line) > 2))//the map is on the right side of the legend
-		mapStartingPoint.set(20, 0);
-	else if ((rowSize == 0) && (size(line) < 2))
-		mapStartingPoint.set(0, 3);
-	else if ((currChar > 0) && (currChar < colSize))//if the legend is in the map
+	if (((currChar > 0) && (currChar < colSize)) || ((currChar == 0) && (size(line) > 2) && (line.size() <= colSize)))//if the legend is in the map
 	{
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 20; j++)
@@ -109,10 +106,10 @@ void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &c
 
 		}
 		mapCol++;
+		mapStartingPoint.set(0, 0);
 	}
 	else 
 		mapStartingPoint.set(0,0);
-	
 
 
 }

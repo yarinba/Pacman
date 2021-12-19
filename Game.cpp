@@ -179,6 +179,8 @@ void Game::manageFruit(int numOfIterations) {
 	}
 }
 
+
+/*This function getting the files names from the working directory and putting it in the array fileNames*/
 void Game::getFiles() {
 	fileNames.clear();
 	string path = "./";
@@ -200,11 +202,15 @@ void Game::chooseLevel() {
 	ghostLevel = key;
 }
 
+/*This function setting the game mode-all screens or a specific screen according to the user choice*/
 void Game::setMode() {
 	getFiles();
 	char key;
 	if (fileNames.size() == 0)
+	{
 		std::cout << ">>> No files found <<<" << std::endl;
+		exit(1);
+	}
 	else {
 		do {
 			Print::chooseMode();
@@ -217,7 +223,9 @@ void Game::setMode() {
 		mode = Mode::ONE_FILE;
 }
 
+/*This functon initiializing the game class members if the user started a new game*/
 void Game::init() {
+	currFile = 0;
 	isWon = false;
 	isLose = false;
 	eatenBreadcrumbs = 0;
@@ -282,7 +290,7 @@ void Game::run() {
 		}
 
 		numOfIterations++;
-		Sleep(75);
+		Sleep(150);
 	}
 
 	// free allocations;
@@ -290,7 +298,10 @@ void Game::run() {
 		delete ghosts[i];
 
 	if (isLose)
+	{
 		Print::lose();
+		key = _getch();
+	}
 	else if ((isWon) && (mode == Mode::ONE_FILE)) {
 		Print::won();
 		key = _getch();
@@ -342,6 +353,7 @@ bool Game::menu() {
 	
 }
 
+/*Runs the game according to the mode the user chose*/
 void Game::playChosenMode() {
 	string screen;
 	bool found = false;
