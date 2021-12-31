@@ -40,6 +40,42 @@ void clear_screen()
 	system("cls");
 }
 
+char getDirChar(Direction dir) {
+	switch (dir) {
+	case Direction::DOWN:
+		return 'D';
+	case Direction::UP:
+		return 'U';
+	case Direction::RIGHT:
+		return 'R';
+	case Direction::LEFT:
+		return 'L';
+	case Direction::STAY:
+		return 'S';
+	case Direction::NONE:
+	default:
+		return 'N';
+	}
+}
+
+Direction getDirEnum(char dir) {
+	switch (dir) {
+	case 'D':
+		return Direction::DOWN;
+	case 'U':
+		return Direction::UP;
+	case 'R':
+		return Direction::RIGHT;
+	case 'L':
+		return Direction::LEFT;
+	case 'S':
+		return Direction::STAY;
+	case 'N':
+	default:
+		return Direction::NONE;
+	}
+}
+
 #endif
 
 

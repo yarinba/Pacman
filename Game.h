@@ -14,10 +14,13 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <regex>
 using std::vector;
 using std::string;
+using std::fstream;
 
 class Game {
+protected:
 	enum { ESC = 27 };
 	bool isColored = true;
 	bool isWon = false;
@@ -33,19 +36,20 @@ class Game {
 	Pacman pacman;
 	Ghost** ghosts;
 	Fruit fruit;
+	fstream stepsFile;
+	fstream resultFile;
 	friend class Print;
-private:
 	void setNoColor();
 	void setColor();
 	void increaseScore();
 	void increaseScore(int num);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
-	void manageFruit(int numOfIterations);
+	virtual void manageFruit(int numOfIterations)=0;
 	void createFruit();
-	void handleHitFruit();
+	bool handleHitFruit();
 	void handleHitGhost();
-	void handleGhostsMovement(int numOfIterations);
+	virtual void handleGhostsMovement(int numOfIterations)=0;
 	void setGhostsLevel(char level);
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);
@@ -53,10 +57,10 @@ private:
 	void setMode();
 	void getFiles();
 	void init();
-	void run();
+	virtual void run() = 0;
   
 public:
-	void playChosenMode();
+	virtual void play()=0;
 	bool menu();
 	~Game() { delete[] ghosts; }
 };

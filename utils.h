@@ -15,6 +15,8 @@ void gotoxy(int x, int y);
 void setTextColor(Color);
 void hideCursor();
 void clear_screen();
+char getDirChar(Direction dir);
+Direction getDirEnum(char dir);
 
 #ifndef WINDOWS	
 int _getch(void);

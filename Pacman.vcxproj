@@ -144,6 +144,8 @@
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="Fruit.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameLoadMode.cpp" />
+    <ClCompile Include="GamePlayMode.cpp" />
     <ClCompile Include="GhostBest.cpp" />
     <ClCompile Include="GhostGood.cpp" />
     <ClCompile Include="GhostNovice.cpp" />
@@ -161,6 +163,8 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="Fruit.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameLoadMode.h" />
+    <ClInclude Include="GamePlayMode.h" />
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="GhostBest.h" />
     <ClInclude Include="GhostGood.h" />

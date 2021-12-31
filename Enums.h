@@ -36,3 +36,10 @@ enum class Mode {
 	ONE_FILE
 };
 
+enum class FlagsMode {
+	REGULAR,
+	SAVE,
+	LOAD,
+	LOAD_SILENT
+};
+

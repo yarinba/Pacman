@@ -1,0 +1,3 @@
+Died: 20
+Died: 40
+Died: 64

@@ -52,18 +52,6 @@ bool Game::isGhost() const {
 	return false;
 }
 
-/*
-* Get: the number of the current iteration in the game loop
-* Execute only every second loop beacuse the pace of Ghost is half the pace of the Pacman
-*/
-void Game::handleGhostsMovement(int numOfIterations) {
-	int numofGhosts = map.getNumOfGhosts();
-	if (!(numOfIterations % 2)) {
-		for (int i = 0; i < numofGhosts; i++)
-			ghosts[i]->move(map, pacman.getPos(), numOfIterations);
-	}
-}
-
 // The game will be paused after Esc was hit
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
@@ -146,7 +134,7 @@ void Game::createFruit() {
 	fruit.setIsAlive(true);
 }
 
-void Game::handleHitFruit() {
+bool Game::handleHitFruit() {
 	int numofGhosts = map.getNumOfGhosts(), i = 0;
 	bool hitGhost = false, hitPacman = false;
 	// Check Ghost hit Fruit
@@ -154,31 +142,16 @@ void Game::handleHitFruit() {
 		hitGhost = ghosts[i]->getPos() == fruit.getPos();
 		i++;
 	}
-	if (hitGhost) 
-		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
-
+	if (hitGhost)
+		return true;
 	// Check Pacman hit Fruit
 	hitPacman = pacman.getPos() == fruit.getPos();
 	if (hitPacman) {
-		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
 		increaseScore(fruit.getFruitVal());
+		return true;
 	}
+	return false;
 }
-
-void Game::manageFruit(int numOfIterations) {
-	bool iteration100 = numOfIterations % 200 == 100;
-	bool alreadyExist = fruit.getIsAlive();
-	if (!alreadyExist && iteration100)
-		createFruit();
-	else if (alreadyExist) {
-		handleHitFruit();
-		fruit.move(map, numOfIterations);
-
-		if(fruit.getNumOfMoves() == 60)
-			fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
-	}
-}
-
 
 /*This function getting the files names from the working directory and putting it in the array fileNames*/
 void Game::getFiles() {
@@ -236,85 +209,6 @@ void Game::init() {
 	srand(time(NULL));
 }
 
-void Game::run() {
-	char key = ' ';
-	int numOfIterations = 0;
-	Direction dir;
-
-	clear_screen();
-	map.draw();
-	Print::score(*this);
-	Print::lives(*this);
-
-
-	while (!isLose && !isWon) {
-		// Move the ghosts every 2nd iteration
-		handleGhostsMovement(numOfIterations);
-		manageFruit(numOfIterations);
-
-		if (_kbhit()) {
-			key = _getch();
-			if (key == ESC) {
-				hitESC(pacman.getDirection()); /*pause the game*/
-			}
-			else if ((dir = pacman.getDirection(key)) != Direction::NONE) {
-				pacman.setDirection(dir);
-			}
-		}
-
-		/*if pacman hits a wall than he will stop*/
-		if (map.isWall(pacman.getPos(), pacman.getDirection())) {
-			pacman.setDirection(Direction::STAY);
-		}
-		else {
-			pacman.move(map.getRowSize(), map.getColSize());
-		}
-
-		// Check if pacman ate breadcrumb
-		if (isBreadcrumb()) {
-			map.setPoint(pacman.getPos(), ' ');
-			eatenBreadcrumbs++;
-			increaseScore();
-			if (eatenBreadcrumbs == map.getNumOfBreadCrumbs())
-				isWon = true;
-		}
-		// Check if pacman hit ghost
-		if (isGhost()) {
-			handleHitGhost();
-			if (lives) {
-				Print::lives(*this);
-			}
-			else {
-				isLose = true;
-			}
-		}
-
-		numOfIterations++;
-		Sleep(150);
-	}
-
-	// free allocations;
-	for (int i = 0; i < map.getNumOfGhosts(); i++)
-		delete ghosts[i];
-
-	if (isLose)
-	{
-		Print::lose();
-		key = _getch();
-	}
-	else if ((isWon) && (mode == Mode::ONE_FILE)) {
-		Print::won();
-		key = _getch();
-	}
-	else if ((isWon) && (mode == Mode::ALL_FILES))
-	{
-		currFile++;
-		if (currFile >= fileNames.size()) {
-			Print::won();
-			key = _getch();
-		}
-	}
-}
 
 /* Public Functions */
 
@@ -352,46 +246,3 @@ bool Game::menu() {
 	}
 	
 }
-
-/*Runs the game according to the mode the user chose*/
-void Game::playChosenMode() {
-	string screen;
-	bool found = false;
-	int filesSize = fileNames.size();
-	int i = 0; 
-	if (mode == Mode::ONE_FILE) {
-		do {
-			clear_screen();
-			std::cout << "Enter the screen file name" << std::endl;
-			std::cin >> screen;
-			while (i < filesSize) {
-				if ("./" + screen == fileNames[i]) {
-					found = true;
-					break;
-				}
-				i++;
-			}
-			i = 0;
-		} while (!found);
-		init();
-		map.init(screen);
-		initCreatures();
-		setGhostsLevel(ghostLevel);
-		run();
-	}
-	else {
-		init();
-		
-		while ((currFile < filesSize) && (!isLose)) {
-			eatenBreadcrumbs = 0;
-			isWon = false;
-			map.init(fileNames[currFile]);
-
-			initCreatures();
-			setGhostsLevel(ghostLevel);
-			run();
-		}
-	}
-}
-
-
