@@ -13,7 +13,7 @@ public:
 	int getX() const;
 	int getY() const;
 	void set(int _x, int _y);
-	void move(Direction dir);
+	void move(Direction dir, int rowSize = 0, int colSize = 0);
 	void draw(char ch, Color color = Color::WHITE) const;
 	~Point() {}
 };

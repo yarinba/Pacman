@@ -3,19 +3,23 @@
 /* Private Functions */
 
 void Game::setNoColor() {
+	int numofGhosts = map.getNumOfGhosts();
 	isColored = false;
 	map.setIsColored(false);
 	pacman.setColor(Color::WHITE);
-	ghosts[0].setColor(Color::WHITE);
-	ghosts[1].setColor(Color::WHITE);
+	fruit.setColor(Color::WHITE);
+	for(int i=0; i< numofGhosts; i++)
+		ghosts[i]->setColor(Color::WHITE);
 }
 
 void Game::setColor() {
+	int numofGhosts = map.getNumOfGhosts();
 	isColored = true;
 	map.setIsColored(true);
 	pacman.setColor(Color::YELLOW);
-	ghosts[0].setColor(Color::LIGHTMAGENTA);
-	ghosts[1].setColor(Color::LIGHTMAGENTA);
+	fruit.setColor(Color::LIGHTCYAN);
+	for (int i = 0; i < numofGhosts; i++)
+		ghosts[i]->setColor(Color::LIGHTMAGENTA);
 }
 
 // increase score by 1 and prints current score
@@ -30,55 +34,6 @@ void Game::increaseScore(int num) {
 	Print::score(*this);
 }
 
-/*
-* Get: current position and direction
-* Return: Point represents the next move of given position
-*/
-Point Game::calculateNextPos(Point pos, Direction dir) const {
-
-	Point nextPos;
-	switch (dir)
-	{
-	case Direction::UP:
-		nextPos.set(pos.getX(), pos.getY() - 1);
-		break;
-	case Direction::DOWN:
-		nextPos.set(pos.getX(), pos.getY() + 1);
-		break;
-	case Direction::LEFT:
-		nextPos.set(pos.getX() - 1, pos.getY());
-		break;
-	case Direction::RIGHT:
-		nextPos.set(pos.getX() + 1, pos.getY());
-		break;
-	case Direction::STAY:
-	case Direction::NONE:
-		return pos;
-		break;
-	default:
-		break;
-	}
-	return nextPos;
-}
-
-/*
-* Get: current position, direction and boolean if the Player is Pacman or Ghost
-* Return: true if the player will hit the wall, otherwise false
-*/
-bool Game::isWall(Point pos, Direction dir, bool isPacman) const {
-	Point nextPos = calculateNextPos(pos, dir);
-	//  Ghosts cannot cross in the invisible tunnels!
-	if (!isPacman) {
-		int x = nextPos.getX();
-		int y = nextPos.getY();
-		if (y == 0 || y == MAP_BOUNDARIES::Y - 1 || x == 0 || x == MAP_BOUNDARIES::X - 1)
-			return true;
-	}
-	if (map.getPoint(nextPos) == '#')
-		return true;
-	return false;
-}
-
 // Return: true if the Pacman hits breadcrumb, otherwise false
 bool Game::isBreadcrumb() const {
 	if (map.getPoint(pacman.getPos()) == '*') {
@@ -89,8 +44,9 @@ bool Game::isBreadcrumb() const {
 
 // Return: true if the Pacman hits one of the ghosts, otherwise false
 bool Game::isGhost() const {
-	for (int i = 0; i < 2; i++) {
-		if (pacman.getPos() == ghosts[i].getPos())
+	int numofGhosts = map.getNumOfGhosts();
+	for (int i = 0; i < numofGhosts; i++) {
+		if (pacman.getPos() == ghosts[i]->getPos())
 			return true;
 	}
 	return false;
@@ -98,113 +54,191 @@ bool Game::isGhost() const {
 
 /*
 * Get: the number of the current iteration in the game loop
-* Will execute only every second loop beacuse the pace of Ghost is half the pace of the Pacman
+* Execute only every second loop beacuse the pace of Ghost is half the pace of the Pacman
 */
 void Game::handleGhostsMovement(int numOfIterations) {
-	bool isBreadcrumbPos = false;
+	int numofGhosts = map.getNumOfGhosts();
 	if (!(numOfIterations % 2)) {
-		for (int i = 0; i < 2; i++) {
-			// Change the direction of the ghost if it hits the wall
-			while (isWall(ghosts[i].getPos(), ghosts[i].getDirection(), false)) {
-				ghosts[i].setDirection();
-			}
-			// Boolean - true if the Ghost stepped on a breadcrumb, otherwise false
-			isBreadcrumbPos = (map.getPoint(ghosts[i].getPos()) == '*');
-			ghosts[i].move(isBreadcrumbPos);
-		}
-
-		if (!(numOfIterations % 20)) {
-			ghosts[0].setDirection();
-			ghosts[1].setDirection();
-		}
+		for (int i = 0; i < numofGhosts; i++)
+			ghosts[i]->move(map, pacman.getPos(), numOfIterations);
 	}
 }
 
-/*if the player hits Esc than the game will be paused*/
+// The game will be paused after Esc was hit
 void Game::hitESC(Direction prevPacmanDirection) {
 	char key = ' ';
-	Print::pause();
+	int numofGhosts = map.getNumOfGhosts();
+	Print::pause(*this);
 	pacman.setDirection(Direction::NONE);
-	ghosts[0].setDirection(Direction::NONE);
-	ghosts[1].setDirection(Direction::NONE);
+	for (int i = 0; i < numofGhosts; i++)
+		ghosts[i]->setDirection(Direction::NONE);
 	do {
 		key = _getch();
 	} while (key != ESC);
 
-  /*returning ghost and pacman their original direction*/
-	Print::clearPause();
-	ghosts[0].setDirection();
-	ghosts[1].setDirection();
+	Print::clearPause(*this);
 	pacman.setDirection(prevPacmanDirection);
 }
 
-/*This function initiallizing the positions of the ghosts and pacman*/
-void Game::initCreatures() {
+// Initiallizing pacman position and array of ghosts
+void Game::initCreatures(bool newGame) {
+	int numofGhosts = map.getNumOfGhosts();
 	pacman.setDirection(Direction::NONE);
-	pacman.setPos(34, 17);
-	ghosts[0].setPos(48, 3);
-	ghosts[1].setPos(50, 3);
-	ghosts[0].setDirection();
-	ghosts[1].setDirection();
+	pacman.setPos(map.getPacmanPos());
+	fruit.setIsAlive(false);
+	if(newGame)
+		ghosts = new Ghost*[numofGhosts];
+	else {
+		const Point* ghostsPos = map.getGhostsPos();
+		for (int i = 0; i < numofGhosts; i++) {
+			ghosts[i]->setPos(ghostsPos[i]);
+			ghosts[i]->setDirection(Direction::NONE);
+		}
+	}
 }
 
-/*This function reducing the number of lives by 1 and returning pacman and the ghosts to their starting point in case that pacman hits a ghost*/
+// Reducing lives by 1 
+// Initiallize pacman and ghosts positions
 void Game::handleHitGhost() {
 	lives--;
-	initCreatures();
+	initCreatures(false);
 	map.draw();
+	Print::score(*this);
+	Print::lives(*this);
 }
 
-/* Public Functions */
+void Game::setGhostsLevel(char level) {
+	int numofGhosts = map.getNumOfGhosts();
+	int i;
+	switch (level) {
+	case '1':
+		for (i = 0; i < numofGhosts; i++)
+			ghosts[i] = new GhostNovice;
+		break;
+	case '2':
+		for (i = 0; i < numofGhosts; i++)
+			ghosts[i] = new GhostGood;
+		break;
+	case '3':
+		for (i = 0; i < numofGhosts; i++)
+			ghosts[i] = new GhostBest;
+		break;
+	}
+	const Point* ghostsPos = map.getGhostsPos();
+	for (int i = 0; i < numofGhosts; i++) {
+		ghosts[i]->setPos(ghostsPos[i]);
+		ghosts[i]->setDirection(Direction::NONE);
+		ghosts[i]->setColor(isColored ? Color::LIGHTMAGENTA : Color::WHITE);
+	}
+}
 
+void Game::createFruit() {
+	Point p;
+	int x = 0, y = 0;
+	bool isValid = false; 
+	do {
+		int x = (rand() % (map.getColSize() - 1)) + 1;
+		int y = (rand() % (map.getRowSize() - 1)) + 1;
+		p = Point(x, y);
+		isValid = map.getPoint(p) == '*' || map.getPoint(p) == ' ';
+	} while (!isValid);
+	fruit.setPos(p);
+	fruit.setIsAlive(true);
+}
+
+void Game::handleHitFruit() {
+	int numofGhosts = map.getNumOfGhosts(), i = 0;
+	bool hitGhost = false, hitPacman = false;
+	// Check Ghost hit Fruit
+	while (!hitGhost && i < numofGhosts) {
+		hitGhost = ghosts[i]->getPos() == fruit.getPos();
+		i++;
+	}
+	if (hitGhost) 
+		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
+
+	// Check Pacman hit Fruit
+	hitPacman = pacman.getPos() == fruit.getPos();
+	if (hitPacman) {
+		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
+		increaseScore(fruit.getFruitVal());
+	}
+}
+
+void Game::manageFruit(int numOfIterations) {
+	bool iteration100 = numOfIterations % 200 == 100;
+	bool alreadyExist = fruit.getIsAlive();
+	if (!alreadyExist && iteration100)
+		createFruit();
+	else if (alreadyExist) {
+		handleHitFruit();
+		fruit.move(map, numOfIterations);
+
+		if(fruit.getNumOfMoves() == 60)
+			fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
+	}
+}
+
+
+/*This function getting the files names from the working directory and putting it in the array fileNames*/
+void Game::getFiles() {
+	fileNames.clear();
+	string path = "./";
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		string str = entry.path().string();
+		if (str.find(".screen") != string::npos) {
+			string str1 = str;
+			fileNames.push_back(str1);
+		}
+	}
+}
+
+void Game::chooseLevel() {
+	char key;
+	do {
+		Print::chooseLevel();
+		key = _getch();
+	} while (key != '1' && key != '2' && key != '3');
+	ghostLevel = key;
+}
+
+/*This function setting the game mode-all screens or a specific screen according to the user choice*/
+void Game::setMode() {
+	getFiles();
+	char key;
+	if (fileNames.size() == 0)
+	{
+		std::cout << ">>> No files found <<<" << std::endl;
+		exit(1);
+	}
+	else {
+		do {
+			Print::chooseMode();
+			key = _getch();
+		} while (key != '1' && key != '2');
+	}
+	if (key == '1')
+		mode = Mode::ALL_FILES;
+	else
+		mode = Mode::ONE_FILE;
+}
+
+/*This functon initiializing the game class members if the user started a new game*/
 void Game::init() {
+	currFile = 0;
 	isWon = false;
 	isLose = false;
 	eatenBreadcrumbs = 0;
 	score = 0;
 	lives = 3;
-
-	map.init();
-	initCreatures();
 	hideCursor();
 	setTextColor(Color::WHITE);
 	srand(time(NULL));
 }
 
-/*
-* Displays the menu
-* Return: true if the game should start, otherwise false
-*/
-bool Game::menu() {
-	Print::menu();
-	char key = _getch();
-
-	switch (key)
-	{
-	case '1':
-		setColor();
-		return true;
-		break;
-	case '2':
-		setNoColor();
-		return true;
-		break;
-	case '8':
-		Print::instructions();
-		return false;
-		break;
-	case '9':
-		exit(0);
-		break;
-	default:
-		return false;
-		break;
-	}
-}
-
 void Game::run() {
-	int numOfIterations = 0;
 	char key = ' ';
+	int numOfIterations = 0;
 	Direction dir;
 
 	clear_screen();
@@ -216,6 +250,7 @@ void Game::run() {
 	while (!isLose && !isWon) {
 		// Move the ghosts every 2nd iteration
 		handleGhostsMovement(numOfIterations);
+		manageFruit(numOfIterations);
 
 		if (_kbhit()) {
 			key = _getch();
@@ -228,22 +263,22 @@ void Game::run() {
 		}
 
 		/*if pacman hits a wall than he will stop*/
-		if (isWall(pacman.getPos(), pacman.getDirection())) {
+		if (map.isWall(pacman.getPos(), pacman.getDirection())) {
 			pacman.setDirection(Direction::STAY);
 		}
 		else {
-			pacman.move();
+			pacman.move(map.getRowSize(), map.getColSize());
 		}
 
-		/*if pacman ate breadcrumb*/
+		// Check if pacman ate breadcrumb
 		if (isBreadcrumb()) {
 			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
 			increaseScore();
-			if (eatenBreadcrumbs == BREADCRUMBS)
+			if (eatenBreadcrumbs == map.getNumOfBreadCrumbs())
 				isWon = true;
 		}
-		/*if pacman hit a ghost*/
+		// Check if pacman hit ghost
 		if (isGhost()) {
 			handleHitGhost();
 			if (lives) {
@@ -258,9 +293,105 @@ void Game::run() {
 		Sleep(150);
 	}
 
+	// free allocations;
+	for (int i = 0; i < map.getNumOfGhosts(); i++)
+		delete ghosts[i];
+
 	if (isLose)
+	{
 		Print::lose();
-	else if (isWon)
+		key = _getch();
+	}
+	else if ((isWon) && (mode == Mode::ONE_FILE)) {
 		Print::won();
-	key = _getch();
+		key = _getch();
+	}
+	else if ((isWon) && (mode == Mode::ALL_FILES))
+	{
+		currFile++;
+		if (currFile >= fileNames.size()) {
+			Print::won();
+			key = _getch();
+		}
+	}
 }
+
+/* Public Functions */
+
+/*
+* Displays the menu
+* Return: true if the game should start, otherwise false
+*/
+bool Game::menu() {
+	Print::menu();
+	char key = _getch();
+	switch (key)
+	{
+	case '1':
+		setMode();
+		chooseLevel();
+		setColor();
+		return true;
+		break;
+	case '2':
+		setMode();
+		chooseLevel();
+		setNoColor();
+		return true;
+		break;
+	case '8':
+		Print::instructions();
+		return false;
+		break;
+	case '9':
+		exit(0);
+		break;
+	default:
+		return false;
+		break;
+	}
+	
+}
+
+/*Runs the game according to the mode the user chose*/
+void Game::playChosenMode() {
+	string screen;
+	bool found = false;
+	int filesSize = fileNames.size();
+	int i = 0; 
+	if (mode == Mode::ONE_FILE) {
+		do {
+			clear_screen();
+			std::cout << "Enter the screen file name" << std::endl;
+			std::cin >> screen;
+			while (i < filesSize) {
+				if ("./" + screen == fileNames[i]) {
+					found = true;
+					break;
+				}
+				i++;
+			}
+			i = 0;
+		} while (!found);
+		init();
+		map.init(screen);
+		initCreatures();
+		setGhostsLevel(ghostLevel);
+		run();
+	}
+	else {
+		init();
+		
+		while ((currFile < filesSize) && (!isLose)) {
+			eatenBreadcrumbs = 0;
+			isWon = false;
+			map.init(fileNames[currFile]);
+
+			initCreatures();
+			setGhostsLevel(ghostLevel);
+			run();
+		}
+	}
+}
+
+

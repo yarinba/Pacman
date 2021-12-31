@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,6 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,21 +141,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Creature.cpp" />
+    <ClCompile Include="Fruit.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Ghost.cpp" />
+    <ClCompile Include="GhostBest.cpp" />
+    <ClCompile Include="GhostGood.cpp" />
+    <ClCompile Include="GhostNovice.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Pacman.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Print.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Creature.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="Fruit.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="GhostBest.h" />
+    <ClInclude Include="GhostGood.h" />
+    <ClInclude Include="GhostNovice.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Movement.h" />
     <ClInclude Include="Pacman.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Print.h" />
