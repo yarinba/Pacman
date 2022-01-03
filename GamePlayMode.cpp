@@ -163,6 +163,8 @@ void GamePlayMode::run() {
 		}
 		if (isSaveMode) writeSteps("Pacman", pacman.getDirection());
 
+		numOfIterations++;
+
 		// Check if pacman ate breadcrumb
 		if (isBreadcrumb()) {
 			map.setPoint(pacman.getPos(), ' ');
@@ -183,7 +185,6 @@ void GamePlayMode::run() {
 			if (isSaveMode) writeResult(ResultType::DIE, numOfIterations);
 		}
 		
-		numOfIterations++;
 		Sleep(150);
 	}
 
@@ -191,13 +192,13 @@ void GamePlayMode::run() {
 	for (int i = 0; i < map.getNumOfGhosts(); i++)
 		delete ghosts[i];
 
+	if (isSaveMode) writeResult(ResultType::FINISH, numOfIterations);
 	if (isLose)
 	{
 		Print::lose();
 		key = _getch();
 	}
 	else if (isWon) {
-		if (isSaveMode) writeResult(ResultType::FINISH, numOfIterations);
 		if (mode == ScreenMode::ONE_FILE) {
 			Print::won();
 			key = _getch();

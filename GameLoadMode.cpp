@@ -1,5 +1,29 @@
 #include "GameLoadMode.h"
 
+int GameLoadMode::getNumberFromLine(string line) {
+	auto it = line.find(':');
+	string tempLine = line.substr(it + 1);
+	int res = std::stoi(tempLine);
+	return res;
+}
+
+void GameLoadMode::getDataFromResultFile() {
+	iterationsOfDeath.clear();
+	string line;
+	while (!resultFile.eof()) {
+		getline(resultFile, line);
+		auto it = line.find(':');
+		// D symbolize Died
+		if (line[0] == 'D') {
+			iterationsOfDeath.push_back(getNumberFromLine(line));
+		} 
+		// D symbolize Finished
+		else if (line[0] == 'F') {
+			interationOfFinish = getNumberFromLine(line);
+		}
+	}
+}
+
 void GameLoadMode::getStepsAndResultFiles() {
 	stepsFilesNames.clear();
 	resultFilesNames.clear();
@@ -42,10 +66,18 @@ void GameLoadMode::play() {
 
 		initCreatures();
 		setGhostsLevel('1'); // Set to novice - Irrelevant
-		run();
-
+		getDataFromResultFile();
+		try {
+			run();
+		}
+		catch (string& err) {
+			string screenName = getScreenFile(stepsFilesNames[currFile]);
+			throw string("Test Failed at screen " + screenName + " - " + err);
+		}
 		closeRecordingFiles();
+		currFile++;
 	}
+	Print::successfulTest();
 }
 
 void GameLoadMode::handleGhostMovement(string line) {
@@ -77,7 +109,7 @@ void GameLoadMode::manageFruit(string line) {
 	else if (line.find("Disappearance") != string::npos) {
 		// Check Pacman hit Fruit
 		if (pacman.getPos() == fruit.getPos())
-			increaseScore(fruit.getFruitVal());
+			increaseScore(fruit.getFruitVal(), isSilentMode);
 		fruit.setIsAlive(false, map.getPoint(fruit.getPos()) == '*');
 	}
 	//Fruit Move
@@ -120,23 +152,29 @@ void GameLoadMode::run() {
 		if (isBreadcrumb()) {
 			map.setPoint(pacman.getPos(), ' ');
 			eatenBreadcrumbs++;
-			increaseScore();
+			increaseScore(isSilentMode);
 			if (eatenBreadcrumbs == map.getNumOfBreadCrumbs())
 				isWon = true;
 		}
 
 		// Check if pacman hit ghost
 		if (isGhost()) {
-			handleHitGhost();
+			handleHitGhost(isSilentMode);
 			if (lives) {
 				if (!isSilentMode) Print::lives(*this);
+				bool isValidTestOfDeath = std::count(iterationsOfDeath.begin(), iterationsOfDeath.end(), numOfIterations);
+				if (!isValidTestOfDeath)
+					throw string(std::to_string(numOfIterations) + " is not a Death Iteration");
 			}
 			else {
 				isLose = true;
+				bool isValidTestOfFinish = interationOfFinish == numOfIterations;
+				if (!isValidTestOfFinish)
+					throw string(std::to_string(numOfIterations) + " is not a Finish Iteration");
 			}
 		}
 
-		if (!isSilentMode) Sleep(10);
+		if (!isSilentMode) Sleep(30);
 	}
 
 	// free allocations;
@@ -145,15 +183,20 @@ void GameLoadMode::run() {
 
 	if (!isSilentMode && isLose) {
 		Print::lose();
+		Sleep(1000);
 	}
 	else if (isWon) {
-		currFile++;
-		if (!isSilentMode) std::cout << "Move on to the next screen";
-		Sleep(1000);
+		bool isValidTestOfFinish = interationOfFinish == numOfIterations;
+		if (!isValidTestOfFinish)
+			throw string(std::to_string(numOfIterations) + " is not a Finish Iteration");
+
+		if (!isSilentMode) {
+			Print::nextScreen();
+			Sleep(1000);
+		}
 
 		if (currFile >= screenFilesNames.size()) {
 			if (!isSilentMode) Print::won();
-			//TODO: Print if test is successful or not
 		}
 	}
 }

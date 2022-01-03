@@ -23,15 +23,15 @@ void Game::setColor() {
 }
 
 // increase score by 1 and prints current score
-void Game::increaseScore() {
+void Game::increaseScore(bool isSilentMode) {
 	score++;
-	Print::score(*this);
+	if (!isSilentMode) Print::score(*this);
 }
 
 // increase score by given number and prints current score
-void Game::increaseScore(int num) {
+void Game::increaseScore(int num, bool isSilentMode) {
 	score += num;
-	Print::score(*this);
+	if (!isSilentMode) Print::score(*this);
 }
 
 // Return: true if the Pacman hits breadcrumb, otherwise false
@@ -87,12 +87,14 @@ void Game::initCreatures(bool newGame) {
 
 // Reducing lives by 1 
 // Initiallize pacman and ghosts positions
-void Game::handleHitGhost() {
+void Game::handleHitGhost(bool isSilentMode) {
 	lives--;
 	initCreatures(false);
-	map.draw();
-	Print::score(*this);
-	Print::lives(*this);
+	if (!isSilentMode) {
+		map.draw();
+		Print::score(*this);
+		Print::lives(*this);
+	}
 }
 
 void Game::setGhostsLevel(char level) {

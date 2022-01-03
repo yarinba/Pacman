@@ -103,4 +103,15 @@ void Print::lives(const Game& game) {
 	}
 }
 
+void Print::successfulTest() {
+	setTextColor(Color::WHITE);
+	clear_screen();
+	std::cout << ">>> Test passed successfully ! <<<" << std::endl;
+}
+
+void Print::nextScreen() {
+	setTextColor(Color::WHITE);
+	clear_screen();
+	std::cout << ">>> Move on to the next screen <<<" << std::endl;
+}
  

@@ -41,13 +41,13 @@ protected:
 	friend class Print;
 	void setNoColor();
 	void setColor();
-	void increaseScore();
-	void increaseScore(int num);
+	void increaseScore(bool isSilentMode = false);
+	void increaseScore(int num, bool isSilentMode = false);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
 	void createFruit();
 	bool handleHitFruit();
-	void handleHitGhost();
+	void handleHitGhost(bool isSilentMode = false);
 	void setGhostsLevel(char level);
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);

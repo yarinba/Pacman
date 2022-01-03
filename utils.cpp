@@ -88,7 +88,7 @@ FlagsMode getMode(int argc, char* argv[]) {
 			flags.at(argv[i]) = true;
 		}
 		catch (const std::out_of_range& err) {
-			std::cerr << "Invalid flag - Out of Range error: " << err.what() << '\n';
+			throw string("Invalid flag");
 		}
 	}
 

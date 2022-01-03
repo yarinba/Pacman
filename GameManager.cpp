@@ -49,6 +49,9 @@ void GameManager::load() {
 }
 
 void GameManager::loadSilently() {
+	game = new GameLoadMode;
+	((GameLoadMode*)game)->setIsSilentMode(true);
 
+	game->play();
 }
 
