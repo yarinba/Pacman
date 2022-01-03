@@ -31,7 +31,7 @@ enum class Direction {
 
 enum MapBoundaries { X = 80, Y = 25 };
 
-enum class Mode {
+enum class ScreenMode {
 	ALL_FILES,
 	ONE_FILE
 };

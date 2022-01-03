@@ -29,9 +29,9 @@ protected:
 	int score = 0;
 	int lives = 3;
 	int currFile = 0;
-	Mode mode;
+	ScreenMode mode;
 	char ghostLevel = '0';
-	vector <string> fileNames;
+	vector <string> screenFilesNames;
 	Map map;
 	Pacman pacman;
 	Ghost** ghosts;
@@ -45,19 +45,19 @@ protected:
 	void increaseScore(int num);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
-	virtual void manageFruit(int numOfIterations)=0;
 	void createFruit();
 	bool handleHitFruit();
 	void handleHitGhost();
-	virtual void handleGhostsMovement(int numOfIterations)=0;
 	void setGhostsLevel(char level);
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);
 	void chooseLevel();
 	void setMode();
-	void getFiles();
+	void getScreenFiles();
 	void init();
 	virtual void run() = 0;
+	virtual void openRecordingFiles(string screenName) = 0;
+	void closeRecordingFiles();
   
 public:
 	virtual void play()=0;

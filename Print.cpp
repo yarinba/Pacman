@@ -58,7 +58,7 @@ void Print::clearPause(const Game& game) {
 void Print::chooseMode() {
 	setTextColor(Color::WHITE);
 	clear_screen();
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Mode Game <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>> Game Mode <<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl
 		<< "Please choose the mode of the game:" << std::endl
 		<< "1. Play on all screens" << std::endl
 		<< "2. Play on a specific screen" << std::endl;

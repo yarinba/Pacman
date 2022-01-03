@@ -1,33 +1,26 @@
 #include "GamePlayMode.h"
 
-void GamePlayMode::openFiles(string screenFileName) {
+void GamePlayMode::openRecordingFiles(string screenFileName) {
 	string stepsFileName = std::regex_replace(screenFileName, std::regex("screen"), "steps"); // replace 'screen' -> 'steps'
 	stepsFile.open(stepsFileName, std::fstream::trunc | std::fstream::out);
 	string resultFileName = std::regex_replace(screenFileName, std::regex("screen"), "result"); // replace 'screen' -> 'result'
 	resultFile.open(resultFileName, std::fstream::trunc | std::fstream::out);
 }
 
-void GamePlayMode::closeFiles() {
-	if (stepsFile.is_open())
-		stepsFile.close();
-	if (resultFile.is_open())
-		resultFile.close();
-}
-
 // Runs the game according to the mode the user chose
 void GamePlayMode::play() {
 	string screen;
 	bool found = false;
-	int filesSize = fileNames.size();
+	int filesSize = screenFilesNames.size();
 	int i = 0;
 	
-	if (mode == Mode::ONE_FILE) {
+	if (mode == ScreenMode::ONE_FILE) {
 		do {
 			clear_screen();
 			std::cout << "Enter the screen file name" << std::endl;
 			std::cin >> screen;
 			while (i < filesSize) {
-				if ("./" + screen == fileNames[i]) {
+				if ("./" + screen == screenFilesNames[i]) {
 					found = true;
 					break;
 				}
@@ -36,7 +29,7 @@ void GamePlayMode::play() {
 			i = 0;
 		} while (!found);
 
-		if (isSaveMode) openFiles(screen);
+		if (isSaveMode) openRecordingFiles(screen);
 
 		init();
 		map.init(screen);
@@ -44,31 +37,39 @@ void GamePlayMode::play() {
 		setGhostsLevel(ghostLevel);
 		run();
 
-		if (isSaveMode) closeFiles();
+		if (isSaveMode) closeRecordingFiles();
 	}
 	else {
 		init();
 
 		while ((currFile < filesSize) && (!isLose)) {
-			if (isSaveMode) openFiles(screen);
+			if (isSaveMode) openRecordingFiles(screenFilesNames[currFile]);
 
 			eatenBreadcrumbs = 0;
 			isWon = false;
-			map.init(fileNames[currFile]);
+			map.init(screenFilesNames[currFile]);
 
 			initCreatures();
 			setGhostsLevel(ghostLevel);
 			run();
 
-			if (isSaveMode) closeFiles();
+			if (isSaveMode) closeRecordingFiles();
 		}
 	}
 }
 
 void GamePlayMode::
 writeSteps(string creatureName, Direction dir, bool FruitAppearance, bool FruitDisappearance) {
-	if (FruitAppearance) 
-		stepsFile << creatureName << " " << "Appearance" << std::endl;
+
+	if (FruitAppearance) {
+		string x = std::to_string(fruit.getPos().getX());
+		string y = std::to_string(fruit.getPos().getY());
+		string fruitVal(1, fruit.getSymbol());
+
+		string strAppear = "Appearance " + fruitVal + " (" + x + "," + y + ")";
+
+		stepsFile << creatureName << " " << strAppear << std::endl;
+	}
 	else if (FruitDisappearance)
 		stepsFile << creatureName << " " << "Disappearance" << std::endl;
 	else
@@ -95,10 +96,11 @@ void GamePlayMode::manageFruit(int numOfIterations) {
 			if (isSaveMode) writeSteps("Fruit", Direction::NONE, false, true);
 		} 
 		else {
-			fruit.move(map, numOfIterations);
-			if (isSaveMode) writeSteps("Fruit", fruit.getDirection());
+			if (!(numOfIterations % 3)) {
+				fruit.move(map, numOfIterations);
+				if (isSaveMode) writeSteps("Fruit", fruit.getDirection());
+			}
 		}
-
 	}
 }
 
@@ -111,7 +113,6 @@ void GamePlayMode::handleGhostsMovement(int numOfIterations) {
 	if (!(numOfIterations % 2)) {
 		for (int i = 0; i < numofGhosts; i++) {
 			ghosts[i]->move(map, pacman.getPos(), numOfIterations);
-
 			if (isSaveMode) writeSteps("Ghost" + std::to_string(i), ghosts[i]->getDirection());
 		}
 	}
@@ -128,10 +129,19 @@ void GamePlayMode::run() {
 	Print::lives(*this);
 
 	while (!isLose && !isWon) {
-		if (isSaveMode) writeSteps("Pacman", pacman.getDirection());
-
 		// Move the ghosts every 2nd iteration
 		handleGhostsMovement(numOfIterations);
+		if (isGhost()) {
+			handleHitGhost();
+			if (lives) {
+				Print::lives(*this);
+			}
+			else {
+				isLose = true;
+			}
+			if (isSaveMode) writeResult(ResultType::DIE, numOfIterations);
+		}
+
 		manageFruit(numOfIterations);
 
 		if (_kbhit()) {
@@ -151,6 +161,7 @@ void GamePlayMode::run() {
 		else {
 			pacman.move(map.getRowSize(), map.getColSize());
 		}
+		if (isSaveMode) writeSteps("Pacman", pacman.getDirection());
 
 		// Check if pacman ate breadcrumb
 		if (isBreadcrumb()) {
@@ -169,9 +180,9 @@ void GamePlayMode::run() {
 			else {
 				isLose = true;
 			}
-			writeResult(ResultType::DIE, numOfIterations);
+			if (isSaveMode) writeResult(ResultType::DIE, numOfIterations);
 		}
-
+		
 		numOfIterations++;
 		Sleep(150);
 	}
@@ -186,14 +197,14 @@ void GamePlayMode::run() {
 		key = _getch();
 	}
 	else if (isWon) {
-		writeResult(ResultType::FINISH, numOfIterations);
-		if (mode == Mode::ONE_FILE) {
+		if (isSaveMode) writeResult(ResultType::FINISH, numOfIterations);
+		if (mode == ScreenMode::ONE_FILE) {
 			Print::won();
 			key = _getch();
 		}
-		else if (mode == Mode::ALL_FILES) {
+		else if (mode == ScreenMode::ALL_FILES) {
 			currFile++;
-			if (currFile >= fileNames.size()) {
+			if (currFile >= screenFilesNames.size()) {
 				Print::won();
 				key = _getch();
 			}

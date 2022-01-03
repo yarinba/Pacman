@@ -24,9 +24,9 @@ private:
 	void handleLegend(std::fstream& myfile, std::string &line, int& mapCol, int& currChar);
 	void handleChar(char value, int& currCol);
 	void getBoard(string fileName);
-	Point calculateNextPos(Point pos, Direction dir) const;
 
 public:
+	Point calculateNextPos(Point pos, Direction dir) const;
 	void init(string fileName);
 	void draw() const;
 	void setIsColored(bool _isColored);

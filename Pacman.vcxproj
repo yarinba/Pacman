@@ -145,6 +145,7 @@
     <ClCompile Include="Fruit.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameLoadMode.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GamePlayMode.cpp" />
     <ClCompile Include="GhostBest.cpp" />
     <ClCompile Include="GhostGood.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Fruit.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameLoadMode.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GamePlayMode.h" />
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="GhostBest.h" />

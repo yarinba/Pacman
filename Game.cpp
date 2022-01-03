@@ -153,15 +153,15 @@ bool Game::handleHitFruit() {
 	return false;
 }
 
-/*This function getting the files names from the working directory and putting it in the array fileNames*/
-void Game::getFiles() {
-	fileNames.clear();
+/*This function getting the files names from the working directory and putting it in the array screenFilesNames*/
+void Game::getScreenFiles() {
+	screenFilesNames.clear();
 	string path = "./";
 	for (const auto& entry : std::filesystem::directory_iterator(path)) {
 		string str = entry.path().string();
 		if (str.find(".screen") != string::npos) {
 			string str1 = str;
-			fileNames.push_back(str1);
+			screenFilesNames.push_back(str1);
 		}
 	}
 }
@@ -177,9 +177,9 @@ void Game::chooseLevel() {
 
 /*This function setting the game mode-all screens or a specific screen according to the user choice*/
 void Game::setMode() {
-	getFiles();
+	getScreenFiles();
 	char key;
-	if (fileNames.size() == 0)
+	if (screenFilesNames.size() == 0)
 	{
 		std::cout << ">>> No files found <<<" << std::endl;
 		exit(1);
@@ -191,9 +191,9 @@ void Game::setMode() {
 		} while (key != '1' && key != '2');
 	}
 	if (key == '1')
-		mode = Mode::ALL_FILES;
+		mode = ScreenMode::ALL_FILES;
 	else
-		mode = Mode::ONE_FILE;
+		mode = ScreenMode::ONE_FILE;
 }
 
 /*This functon initiializing the game class members if the user started a new game*/
@@ -209,6 +209,12 @@ void Game::init() {
 	srand(time(NULL));
 }
 
+void Game::closeRecordingFiles() {
+	if (stepsFile.is_open())
+		stepsFile.close();
+	if (resultFile.is_open())
+		resultFile.close();
+}
 
 /* Public Functions */
 

@@ -8,12 +8,11 @@ private:
 	bool isSaveMode = false;
 	void writeSteps(string creatureName, Direction dir, bool FruitAppearance = false, bool FruitDisappearance = false);
 	void writeResult(ResultType type, int pointOfTime);
-	void openFiles(string screenName);
-	void closeFiles();
+	void openRecordingFiles(string screenFileName) override;
 public:
 	void play() override;
 	void run() override;
-	void manageFruit(int numOfIterations) override;
-	void handleGhostsMovement(int numOfIterations) override;
+	void manageFruit(int numOfIterations);
+	void handleGhostsMovement(int numOfIterations);
 	void setIsSaveMode(bool _isSaveMode) { isSaveMode = _isSaveMode; }
 };
