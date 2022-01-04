@@ -10,15 +10,15 @@ private:
 	vector <string> stepsFilesNames;
 	vector <string> resultFilesNames;
 	void getStepsAndResultFiles();
-	void openRecordingFiles(string screenFileName) override;
+	void openRecordingFiles(const string& screenFileName) override;
 	void getDataFromResultFile();
-	int getNumberFromLine(string line);
-	string getScreenFile(string stepsFileName);
+	int getNumberFromLine(const string& line);
+	string getScreenFile(const string& stepsFileName);
 public:
 	void setIsSilentMode(bool _isSilentMode) { isSilentMode = _isSilentMode; }
 	void play() override;
 	void run() override;
-	void manageFruit(string line);
-	void handleGhostMovement(string line);
-	void handlePacmanMovement(string line);
+	void manageFruit(const string& line);
+	void handleGhostMovement(const string& line);
+	void handlePacmanMovement(const string& line);
 };

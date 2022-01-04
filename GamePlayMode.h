@@ -6,9 +6,9 @@ class GamePlayMode : public Game {
 private:
 	enum class ResultType { DIE, FINISH };
 	bool isSaveMode = false;
-	void writeSteps(string creatureName, Direction dir, bool FruitAppearance = false, bool FruitDisappearance = false);
+	void writeSteps(const string& creatureName, Direction dir, bool FruitAppearance = false, bool FruitDisappearance = false);
 	void writeResult(ResultType type, int pointOfTime);
-	void openRecordingFiles(string screenFileName) override;
+	void openRecordingFiles(const string& screenFileName) override;
 public:
 	void play() override;
 	void run() override;
