@@ -1,6 +1,6 @@
 #include "GamePlayMode.h"
 
-void GamePlayMode::openRecordingFiles(string screenFileName) {
+void GamePlayMode::openRecordingFiles(const string& screenFileName) {
 	string stepsFileName = std::regex_replace(screenFileName, std::regex("screen"), "steps"); // replace 'screen' -> 'steps'
 	stepsFile.open(stepsFileName, std::fstream::trunc | std::fstream::out);
 	string resultFileName = std::regex_replace(screenFileName, std::regex("screen"), "result"); // replace 'screen' -> 'result'
@@ -59,7 +59,7 @@ void GamePlayMode::play() {
 }
 
 void GamePlayMode::
-writeSteps(string creatureName, Direction dir, bool FruitAppearance, bool FruitDisappearance) {
+writeSteps(const string& creatureName, Direction dir, bool FruitAppearance, bool FruitDisappearance) {
 
 	if (FruitAppearance) {
 		string x = std::to_string(fruit.getPos().getX());

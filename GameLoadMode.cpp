@@ -1,6 +1,6 @@
 #include "GameLoadMode.h"
 
-int GameLoadMode::getNumberFromLine(string line) {
+int GameLoadMode::getNumberFromLine(const string& line) {
 	auto it = line.find(':');
 	string tempLine = line.substr(it + 1);
 	int res = std::stoi(tempLine);
@@ -41,13 +41,13 @@ void GameLoadMode::getStepsAndResultFiles() {
 	}
 }
 
-void GameLoadMode::openRecordingFiles(string stepsFileName) {
+void GameLoadMode::openRecordingFiles(const string& stepsFileName) {
 	stepsFile.open(stepsFileName, std::fstream::in);
 	string resultFileName = std::regex_replace(stepsFileName, std::regex("steps"), "result"); // replace 'steps' -> 'result'
 	resultFile.open(resultFileName, std::fstream::in);
 }
 
-string GameLoadMode::getScreenFile(string stepsFileName) {
+string GameLoadMode::getScreenFile(const string& stepsFileName) {
 	return std::regex_replace(stepsFileName, std::regex("steps"), "screen"); // replace 'steps' -> 'screen'
 }
 
@@ -80,20 +80,20 @@ void GameLoadMode::play() {
 	Print::successfulTest();
 }
 
-void GameLoadMode::handleGhostMovement(string line) {
+void GameLoadMode::handleGhostMovement(const string& line) {
 	Direction ghostDir = getDirEnum(line.back());
 	int ghostNum = line[5] - '0';
 	bool isBreadcrumbPos = (map.getPoint(ghosts[ghostNum]->getPos()) == '*');
 	ghosts[ghostNum]->Creature::move(ghostDir, isBreadcrumbPos, isSilentMode);
 }
 
-void GameLoadMode::handlePacmanMovement(string line) {
+void GameLoadMode::handlePacmanMovement(const string& line) {
 	Direction pacmanDir = getDirEnum(line.back());
 	pacman.setDirection(pacmanDir);
 	pacman.move(map.getRowSize(), map.getColSize(), isSilentMode);
 }
 
-void GameLoadMode::manageFruit(string line) {
+void GameLoadMode::manageFruit(const string& line) {
 	//Fruit Appearance
 	if (line.find("Appearance") != string::npos) {
 		size_t openBracket = line.find_last_of('(');

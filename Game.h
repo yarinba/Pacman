@@ -56,7 +56,7 @@ protected:
 	void getScreenFiles();
 	void init();
 	virtual void run() = 0;
-	virtual void openRecordingFiles(string screenName) = 0;
+	virtual void openRecordingFiles(const string& screenName) = 0;
 	void closeRecordingFiles();
   
 public:
