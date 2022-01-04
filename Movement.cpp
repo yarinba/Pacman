@@ -122,19 +122,7 @@ string Movement::pathMoves(const Map& map, const Point& src, const Point& dest) 
 
 Direction Movement::calculateNextMoveBFS(const Map& map, const Point& src, const Point& dest) {
     string path = pathMoves(map, src, dest);
-    switch (path[0]) {
-    case 'D':
-        return Direction::DOWN;
-    case 'U':
-        return Direction::UP;
-    case 'R':
-        return Direction::RIGHT;
-    case 'L':
-        return Direction::LEFT;
-    case 'N':
-    default:
-        return Direction::NONE;
-    }
+    return getDirEnum(path[0]);
 }
 
 /*

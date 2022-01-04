@@ -3,6 +3,12 @@
 Fruit::Fruit() : 
 	Creature(Point(0,0), Direction::NONE, Color::LIGHTCYAN, (((rand() % 5) + 5) + '0')) {};
 
+void Fruit::create(char val, int x, int y) {
+	isAlive = true;
+	setSymbol(val);
+	setPos(x , y);
+}
+
 int Fruit::getFruitVal() {
 	return (int)(symbol - '0');
 }
@@ -20,7 +26,7 @@ void Fruit::setIsAlive(bool _isAlive, bool isBreadcrumbPos) {
 		}
 	}
 	else
-		this->setSymbol((((rand() % 5) + 5) + '0'));
+		setSymbol((((rand() % 5) + 5) + '0'));
 	isAlive = _isAlive;
 }
 

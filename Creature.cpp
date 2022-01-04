@@ -45,3 +45,13 @@ void Creature::setSymbol(char _symbol) {
 void Creature::setColor(Color _color) {
 	color = _color;
 }
+
+void Creature::move(Direction direction, bool isBreadcrumbPos, bool isSilentMode) {
+	setDirection(direction);
+	if (!isSilentMode) {
+		if (isBreadcrumbPos) pos.draw('*');
+		else pos.draw(' ');
+	}
+	pos.move(direction);
+	if (!isSilentMode) pos.draw(symbol, color);
+}

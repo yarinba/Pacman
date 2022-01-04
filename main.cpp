@@ -1,18 +1,21 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
-#include "Game.h"
+#include "utils.h"
+#include "GameManager.h"
 
-
-int main() {
-	bool isStartPressed = false;
-	Game game;
-	
-	while (true) {
-		do {
-			isStartPressed = game.menu();
-		} while (!isStartPressed);
-		game.playChosenMode();
+int main(int argc, char* argv[]) {
+	try {
+		FlagsMode flagMode = getMode(argc, argv);
+		GameManager gameManager(flagMode);
+	}
+	catch (string& err) {
+		clear_screen();
+		std::cerr << "Error: " << err << std::endl;
+	}
+	catch (...) {
+		clear_screen();
+		std::cerr << "Error: Unknown error" << std::endl;
 	}
 
 	return 0;

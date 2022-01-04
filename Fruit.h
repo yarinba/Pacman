@@ -8,6 +8,7 @@ class Fruit : public Creature {
 	bool isAlive = false;
 public:
 	Fruit();
+	void create(char val, int x, int y);
 	int getFruitVal();
 	int getNumOfMoves() { return numOfMoves; }
 	bool getIsAlive();

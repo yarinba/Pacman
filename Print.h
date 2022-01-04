@@ -19,5 +19,6 @@ public:
 	static void noFiles();
 	static void score(const Game& game);
 	static void lives(const Game& game);
-	
+	static void successfulTest();
+	static void nextScreen();
 };

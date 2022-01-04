@@ -21,5 +21,5 @@ public:
 	void setDirection();
 	void setSymbol(char _symbol);
 	void setColor(Color c);
-	
+	void move(Direction direction, bool isBreadcrumbPos, bool isSilentMode);
 };

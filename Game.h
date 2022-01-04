@@ -14,10 +14,13 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <regex>
 using std::vector;
 using std::string;
+using std::fstream;
 
 class Game {
+protected:
 	enum { ESC = 27 };
 	bool isColored = true;
 	bool isWon = false;
@@ -26,37 +29,38 @@ class Game {
 	int score = 0;
 	int lives = 3;
 	int currFile = 0;
-	Mode mode;
+	ScreenMode mode;
 	char ghostLevel = '0';
-	vector <string> fileNames;
+	vector <string> screenFilesNames;
 	Map map;
 	Pacman pacman;
 	Ghost** ghosts;
 	Fruit fruit;
+	fstream stepsFile;
+	fstream resultFile;
 	friend class Print;
-private:
 	void setNoColor();
 	void setColor();
-	void increaseScore();
-	void increaseScore(int num);
+	void increaseScore(bool isSilentMode = false);
+	void increaseScore(int num, bool isSilentMode = false);
 	bool isBreadcrumb() const;
 	bool isGhost() const;
-	void manageFruit(int numOfIterations);
 	void createFruit();
-	void handleHitFruit();
-	void handleHitGhost();
-	void handleGhostsMovement(int numOfIterations);
+	bool handleHitFruit();
+	void handleHitGhost(bool isSilentMode = false);
 	void setGhostsLevel(char level);
 	void hitESC(Direction prevPacmanDirection);
 	void initCreatures(bool newGame = true);
 	void chooseLevel();
 	void setMode();
-	void getFiles();
+	void getScreenFiles();
 	void init();
-	void run();
+	virtual void run() = 0;
+	virtual void openRecordingFiles(string screenName) = 0;
+	void closeRecordingFiles();
   
 public:
-	void playChosenMode();
+	virtual void play()=0;
 	bool menu();
 	~Game() { delete[] ghosts; }
 };

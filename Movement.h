@@ -4,6 +4,7 @@
 #include "Map.h"
 #include "Creature.h"
 #include "Enums.h"
+#include "utils.h"
 #include<queue>
 #include<string>
 
