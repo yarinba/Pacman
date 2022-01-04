@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 	}
 	catch (...) {
 		clear_screen();
-		std::cerr << "Unknown error" << std::endl;
+		std::cerr << "Error: Unknown error" << std::endl;
 	}
 
 	return 0;
