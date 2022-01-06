@@ -1,0 +1,11 @@
+Saved game file structure:
+creature name, direction
+in case of ghost:
+ghost'number of ghost in the array' direction
+
+fruit:
+if appeard:
+fruit,appearence,number of the fruit, position in board.
+if disappeard:
+fruit disappeard.
+else as line 2.

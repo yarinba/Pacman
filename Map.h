@@ -17,7 +17,6 @@ class Map {
 	int numOfBreadCrumbs=0;
 	Point pacmanPos;
 	Point GhostPos[4];
-	Point mapStartingPoint;
 	Point dataPos;
   
 private:
@@ -31,6 +30,7 @@ public:
 	void draw() const;
 	void setIsColored(bool _isColored);
 	void setPoint(const Point& coord, char newVal);
+	void checkMap();
 	char getPoint(const Point& coord) const;
 	bool isWall(Point pos, Direction dir, bool isPacman = true) const;
 	int getColSize() const { return colSize; }

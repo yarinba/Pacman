@@ -6,6 +6,10 @@ void Map::init(string fileName) {
 	numOfGhosts = 0;
 	for (int i = 0; i < MapBoundaries::Y; i++)
 		strcpy(map[i], "                                                                                ");
+	pacmanPos.set(-1, -1);
+	dataPos.set(-1, -1);
+	for (int i = 0; i < 4; i++)
+		GhostPos[i].set(-1, -1);
 
 	getBoard(fileName);
 }
@@ -16,24 +20,21 @@ void Map:: getBoard(string fileName)
 	std::fstream myfile(fileName);
 	std::string line;
 	rowSize = 0;
-	int i = 0,currMapCol=0,searchData=0,len;
-
+	int i = 0, currMapCol = 0, searchData = 0;
 	getline(myfile, line);
 	colSize=line.size();
 	while (!myfile.eof()) { 
-		
-		if ((line[i] == '&') && (size(line) <= 2))  /*if the & is at the end of the file*/
+		if (line.size()<colSize)  
 		{
-			dataPos.set(i, rowSize);
-			handleLegend(myfile, line, currMapCol, i);
+			std::cout << "Error: Unvalid board" << std::endl;
+			exit(1);
 		}
 		else
 		{
-		
 			while (currMapCol < colSize) {
 				if (line[i] == '&') {
-					dataPos.set(i, rowSize);
 					handleLegend(myfile, line, currMapCol, i);
+					dataPos.set(i, rowSize);
 				}
 				else if (map[rowSize][currMapCol] != '!')
 					handleChar(line[i], currMapCol);
@@ -41,60 +42,70 @@ void Map:: getBoard(string fileName)
 					currMapCol++;
 				i++;
 			}
-
 			rowSize++;
 			currMapCol = 0;
 			searchData = i;
-			len = size(line);
-			while (i < len) /*if the & is on the right side of the map*/ {
-				if (line[i] == '&')
-				{
-					handleLegend(myfile, line, currMapCol, i);
-					dataPos.set(i, rowSize);
-				}
-				i++;
-			}
 		}
 		i = 0;
 		getline(myfile, line);
 	}
 
 	myfile.close();
+
+	checkMap();
+	
 }
 
 /*inserting values to the map array and set the positions of pacman and the ghosts according to the signs in the file*/
 void Map::handleChar(char value, int& currCol )
 {
-	switch (value)
-	{
-	case '#':
-		map[rowSize][currCol] = '#';
-		break;
-	case '%':
-		map[rowSize][currCol] = ' ';
-		break;
-	case ' ':
-		numOfBreadCrumbs++;
-		map[rowSize][currCol] = '*';
-		break;
-	case '$':
-		map[rowSize][currCol] = '$';
-		GhostPos[numOfGhosts].set(currCol, rowSize);
-		numOfGhosts++;
-		break;
-	case '@':
-		map[rowSize][currCol] = '@';
-		pacmanPos.set(currCol ,rowSize);
-		break;
-	default:
-		break;
+	try {
+		switch (value)
+		{
+		case '#':
+			map[rowSize][currCol] = '#';
+			break;
+		case '%':
+			map[rowSize][currCol] = ' ';
+			break;
+		case ' ':
+			numOfBreadCrumbs++;
+			map[rowSize][currCol] = '*';
+			break;
+		case '$':
+			if (GhostPos[3].getX() != -1)
+				throw "There are more than 4 ghosts";
+			map[rowSize][currCol] = '$';
+			GhostPos[numOfGhosts].set(currCol, rowSize);
+			numOfGhosts++;
+			break;
+		case '@':
+			if (pacmanPos.getX() != -1)
+				throw "There is more than one pacman";
+			map[rowSize][currCol] = '@';
+			pacmanPos.set(currCol, rowSize);
+			break;
+		default:
+			break;
+		}
+	}
+	catch (const char* error) {
+		clear_screen();
+		std::cout << "Error:" <<error<<std::endl;
+		exit(1);
 	}
 	currCol++;
+	
 }
 
 /*handles the & sign in the map*/
 void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &currChar)
 {
+	if (dataPos.getX() != -1)
+	{
+		std::cout << "Error:There is more than one legend" << std::endl;
+		exit(1);
+	}
 	int xStart=currChar;
 	if (((currChar > 0) && (currChar < colSize)) || ((currChar == 0) && (size(line) > 2) && (line.size() <= colSize)))//if the legend is in the map
 	{
@@ -106,20 +117,15 @@ void Map::handleLegend(std::fstream& myfile,std::string &line,int &mapCol,int &c
 
 		}
 		mapCol++;
-		mapStartingPoint.set(0, 0);
 	}
-	else 
-		mapStartingPoint.set(0,0);
-
-
 }
 
 /*This function drawing each symbol according to the color we set for it*/
 void Map::draw() const {
 	
 	for (int i = 0; i < rowSize; i++) {
-		gotoxy(mapStartingPoint.getX(), mapStartingPoint.getY()+i);
 		for (int j = 0; j < colSize+ 1; j++) {
+			gotoxy(j,i);
 			switch (map[i][j])
 			{
 			case '#':
@@ -213,4 +219,27 @@ bool Map::isWall(Point pos, Direction dir, bool isPacman) const {
 	return false;
 }
 
+
+void Map::checkMap() {
+	if (pacmanPos.getX() == -1)
+	{
+		std::cout<<"Error: There is no Pacman symbol"<<std::endl;
+		exit(1);
+	}
+	if (GhostPos[1].getX() == -1)
+	{ 
+		std::cout<<"Error: There are less than 2 ghosts"<<std::endl;
+		exit(1);
+	}
+	if (dataPos.getX() == -1)
+	{
+		std::cout << "Error: There is no legend in the file" << std::endl;
+		exit(1);
+	}
+	if((rowSize>25)||(colSize>80))
+	{
+		std::cout << "Error: The board is larger than the maximum size allowed" << std::endl;
+		exit(1);
+	}
+}
 

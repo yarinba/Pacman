@@ -12,8 +12,9 @@ private:
 	void playMode();
 	void regular();
 	void save();
-	void load();
+	void load(); 
 	void loadSilently();
 public:
 	GameManager(FlagsMode _mode);
+	~GameManager() { delete game; }
 };

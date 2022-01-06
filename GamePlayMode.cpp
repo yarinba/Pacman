@@ -58,8 +58,7 @@ void GamePlayMode::play() {
 	}
 }
 
-void GamePlayMode::
-writeSteps(const string& creatureName, Direction dir, bool FruitAppearance, bool FruitDisappearance) {
+void GamePlayMode::writeSteps(const string& creatureName, Direction dir, bool FruitAppearance, bool FruitDisappearance) {
 
 	if (FruitAppearance) {
 		string x = std::to_string(fruit.getPos().getX());

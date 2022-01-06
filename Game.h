@@ -62,5 +62,5 @@ protected:
 public:
 	virtual void play()=0;
 	bool menu();
-	~Game() { delete[] ghosts; }
+	~Game() {delete[] ghosts; }
 };
